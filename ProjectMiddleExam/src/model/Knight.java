@@ -3,11 +3,11 @@ package model;
 import java.lang.reflect.Array;
 import java.util.List;
 
-public class Queen extends Piece {
+public class Knight extends Piece {
 	private int value;
-	public Queen(String color, int index) {
+	public Knight(String color, int index) {
 		super(color, index);
-		this.value = 9;
+		this.value =3;
 	}
 
 	@Override
@@ -15,13 +15,15 @@ public class Queen extends Piece {
 		int[] cords = this.getCords();
 		int currentRow = cords[0];
 		int currentCol = cords[1];
-		if (currentCol != col && currentRow == row) {
-			return true;
-		} else if (currentRow != row && currentCol == col) {
-			return true;
-		} else if (Math.abs(currentCol - col) == Math.abs(currentRow - row)) {
+
+		// Check for the L-shaped moves
+		if ((col == currentCol + 2 || col == currentCol - 2) && (row == currentRow + 1 || row == currentRow - 1)) {
 			return true;
 		}
+		if ((col == currentCol + 1 || col == currentCol - 1) && (row == currentRow + 2 || row == currentRow - 2)) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -34,5 +36,4 @@ public class Queen extends Piece {
 	public int getValue() {
 		return this.value;
 	}
-
 }

@@ -3,11 +3,11 @@ package model;
 import java.lang.reflect.Array;
 import java.util.List;
 
-public class Queen extends Piece {
+public class King extends Piece {
 	private int value;
-	public Queen(String color, int index) {
+	public King(String color, int index) {
 		super(color, index);
-		this.value = 9;
+		value = 1000000;
 	}
 
 	@Override
@@ -15,11 +15,8 @@ public class Queen extends Piece {
 		int[] cords = this.getCords();
 		int currentRow = cords[0];
 		int currentCol = cords[1];
-		if (currentCol != col && currentRow == row) {
-			return true;
-		} else if (currentRow != row && currentCol == col) {
-			return true;
-		} else if (Math.abs(currentCol - col) == Math.abs(currentRow - row)) {
+
+		if (Math.abs(currentRow - row) <= 1 && Math.abs(currentCol - col) <= 1) {
 			return true;
 		}
 		return false;
@@ -34,5 +31,4 @@ public class Queen extends Piece {
 	public int getValue() {
 		return this.value;
 	}
-
 }
