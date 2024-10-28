@@ -21,12 +21,12 @@ public class Board {
 		}
 
 		for (int x = 0; x < 8; x++) {
-			tiles.get(x).get(1).setPiece(p1.getPiece(x));
-			p1.getPiece(x).setCords(x, 1);
+			tiles.get(1).get(x).setPiece(p1.getPiece(x));
+			p1.getPiece(x).setCords(1, x);
 			p1.getPiece(x).setAlive();
-			tiles.get(x).get(6).setPiece(p2.getPiece(x));
-			p1.getPiece(x).setCords(x, 2);
-			p1.getPiece(x).setAlive();
+			tiles.get(6).get(x).setPiece(p2.getPiece(x));
+			p2.getPiece(x).setCords(6, x);
+			p2.getPiece(x).setAlive();
 		}
 
 		// Sets white left
@@ -34,65 +34,65 @@ public class Board {
 		tiles.get(0).get(0).setPiece(p1.getPiece(8));
 		p1.getPiece(8).setCords(0, 0);
 		p1.getPiece(8).setAlive();
-		tiles.get(7).get(0).setPiece(p1.getPiece(9));
-		p1.getPiece(9).setCords(7, 0);
+		tiles.get(0).get(7).setPiece(p1.getPiece(9));
+		p1.getPiece(9).setCords(0, 7);
 		p1.getPiece(9).setAlive();
 		// white knight
-		tiles.get(1).get(0).setPiece(p1.getPiece(12));
-		p1.getPiece(12).setCords(1, 0);
+		tiles.get(0).get(1).setPiece(p1.getPiece(12));
+		p1.getPiece(12).setCords(0, 1);
 		p1.getPiece(12).setAlive();
-		tiles.get(1).get(0).setPiece(p1.getPiece(13));
-		p1.getPiece(13).setCords(1, 0);
+		tiles.get(0).get(6).setPiece(p1.getPiece(13));
+		p1.getPiece(13).setCords(0, 6);
 		p1.getPiece(13).setAlive();
 		// white bishop
-		tiles.get(2).get(0).setPiece(p1.getPiece(10));
-		p1.getPiece(10).setCords(2, 0);
+		tiles.get(0).get(2).setPiece(p1.getPiece(10));
+		p1.getPiece(10).setCords(0, 2);
 		p1.getPiece(10).setAlive();
-		tiles.get(5).get(0).setPiece(p1.getPiece(11));
-		p1.getPiece(11).setCords(5, 0);
+		tiles.get(0).get(5).setPiece(p1.getPiece(11));
+		p1.getPiece(11).setCords(0, 5);
 		p1.getPiece(11).setAlive();
 		// white queen
-		tiles.get(3).get(0).setPiece(p1.getPiece(14));
-		p1.getPiece(14).setCords(3, 0);
+		tiles.get(0).get(3).setPiece(p1.getPiece(14));
+		p1.getPiece(14).setCords(0, 3);
 		p1.getPiece(14).setAlive();
 		// white king
-		tiles.get(4).get(0).setPiece(p1.getPiece(15));
-		p1.getPiece(15).setCords(3, 0);
+		tiles.get(0).get(4).setPiece(p1.getPiece(15));
+		p1.getPiece(15).setCords(0, 4);
 		p1.getPiece(15).setAlive();
 
 		// Sets black left
 		// black rook
-		tiles.get(0).get(7).setPiece(p1.getPiece(8));
-		p1.getPiece(8).setCords(0, 7);
-		p1.getPiece(8).setAlive();
-		tiles.get(7).get(7).setPiece(p1.getPiece(9));
-		p1.getPiece(9).setCords(7, 7);
-		p1.getPiece(9).setAlive();
+		tiles.get(7).get(0).setPiece(p2.getPiece(8));
+		p2.getPiece(8).setCords(7, 0);
+		p2.getPiece(8).setAlive();
+		tiles.get(7).get(7).setPiece(p2.getPiece(9));
+		p2.getPiece(9).setCords(7, 7);
+		p2.getPiece(9).setAlive();
 		// black knight
-		tiles.get(1).get(7).setPiece(p1.getPiece(12));
-		p1.getPiece(12).setCords(1, 7);
-		p1.getPiece(12).setAlive();
-		tiles.get(1).get(7).setPiece(p1.getPiece(13));
-		p1.getPiece(13).setCords(1, 7);
-		p1.getPiece(13).setAlive();
+		tiles.get(7).get(1).setPiece(p2.getPiece(12));
+		p2.getPiece(12).setCords(7, 1);
+		p2.getPiece(12).setAlive();
+		tiles.get(7).get(6).setPiece(p2.getPiece(13));
+		p2.getPiece(13).setCords(7, 6);
+		p2.getPiece(13).setAlive();
 		// black bishop
-		tiles.get(2).get(7).setPiece(p1.getPiece(10));
-		p1.getPiece(10).setCords(2, 7);
-		p1.getPiece(10).setAlive();
-		tiles.get(5).get(7).setPiece(p1.getPiece(11));
-		p1.getPiece(11).setCords(5, 7);
-		p1.getPiece(11).setAlive();
+		tiles.get(7).get(2).setPiece(p2.getPiece(10));
+		p2.getPiece(10).setCords(7, 2);
+		p2.getPiece(10).setAlive();
+		tiles.get(7).get(5).setPiece(p2.getPiece(11));
+		p2.getPiece(11).setCords(7, 5);
+		p2.getPiece(11).setAlive();
 		// black queen
-		tiles.get(3).get(7).setPiece(p1.getPiece(14));
-		p1.getPiece(14).setCords(3, 7);
-		p1.getPiece(14).setAlive();
+		tiles.get(7).get(3).setPiece(p2.getPiece(14));
+		p2.getPiece(14).setCords(7, 3);
+		p2.getPiece(14).setAlive();
 		// black king
-		tiles.get(4).get(7).setPiece(p1.getPiece(15));
-		p1.getPiece(15).setCords(3, 7);
-		p1.getPiece(15).setAlive();
+		tiles.get(7).get(4).setPiece(p2.getPiece(15));
+		p2.getPiece(15).setCords(7, 4);
+		p2.getPiece(15).setAlive();
 
 	}
-	
+
 	public ArrayList<ArrayList<Tile>> getTiles() {
 		return tiles;
 	}

@@ -27,7 +27,7 @@ public class Queen extends Piece {
 
 	@Override
 	public List<int[]> listValidMoves(Board board) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	
