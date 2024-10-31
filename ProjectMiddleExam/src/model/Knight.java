@@ -7,8 +7,8 @@ import java.util.List;
 public class Knight extends Piece {
 	private int value;
 
-	public Knight(String color, int index) {
-		super(color, index);
+	public Knight(String name, String color, int index) {
+		super(name, color, index);
 		this.value = 3;
 	}
 
@@ -35,24 +35,25 @@ public class Knight extends Piece {
 	    int currentRow = this.getCords()[0];
 	    int currentCol = this.getCords()[1];
 
-	    // Diagonal moves in all four directions
-	    int[][] directions = {{-1, 1}, {-1, -1}, {1, 1}, {1, -1}};
+	    // Các vị trí mà quân mã có thể di chuyển đến
+	    int[][] possibleMoves = {
+	        {currentRow - 2, currentCol - 1}, {currentRow - 2, currentCol + 1},
+	        {currentRow + 2, currentCol - 1}, {currentRow + 2, currentCol + 1},
+	        {currentRow - 1, currentCol - 2}, {currentRow - 1, currentCol + 2},
+	        {currentRow + 1, currentCol - 2}, {currentRow + 1, currentCol + 2}
+	    };
 
-	    for (int[] direction : directions) {
-	        for (int i = 1; i < 8; i++) {
-	            int newRow = currentRow + direction[0] * i;
-	            int newCol = currentCol + direction[1] * i;
+	    // Kiểm tra từng vị trí có thể di chuyển
+	    for (int[] move : possibleMoves) {
+	        int newRow = move[0];
+	        int newCol = move[1];
 
-	            if (newRow < 0 || newRow > 7 || newCol < 0 || newCol > 7) {
-	                break; // Out of bounds
+	        // Kiểm tra xem vị trí có nằm trong bàn cờ không
+	        if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
+	            if (!board.getTiles()[newRow][newCol].checkOccupied() || 
+	                !board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
+	                listMove.add(new int[] { newRow, newCol });
 	            }
-	            if (board.getTiles().get(newRow).get(newCol).checkOccupied()) {
-	                if (!board.getTiles().get(newRow).get(newCol).getPiece().getColor().equals(this.getColor())) {
-	                    listMove.add(new int[]{newRow, newCol}); // Capture move
-	                }
-	                break; // Stop further movement in this direction
-	            }
-	            listMove.add(new int[]{newRow, newCol}); // Regular move
 	        }
 	    }
 
@@ -63,4 +64,12 @@ public class Knight extends Piece {
 	public int getValue() {
 		return this.value;
 	}
+	
+	   @Override
+	    public String toString() {
+		   if(this.getColor().equals("Black")) {
+			   return "k";
+		   }
+	        return "N"; // Ký hiệu cho quân Mã
+	    }
 }
