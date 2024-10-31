@@ -5,12 +5,10 @@ import java.util.List;
 
 public class Pawn extends Piece {
 	private int value;
-	private boolean firstMove;
 
 	public Pawn(String name, String color, int index) {
 		super(name, color, index);
 		value = 1;
-		firstMove = true;
 	}
 
 	@Override
@@ -47,10 +45,7 @@ public class Pawn extends Piece {
 
 	    if (getColor().equalsIgnoreCase("Black")) { // Nước đi cho quân tốt đen
 	        // Nước đi ban đầu
-	        if (firstMove && currentRow + 2 < 8 && 
-	            !board.getTiles()[currentRow + 1][currentCol].checkOccupied() && 
-	            !board.getTiles()[currentRow + 2][currentCol].checkOccupied()) {
-	            listMove.add(new int[] { currentRow + 1, currentCol });
+	        if (currentRow == 1 && !board.getTiles()[currentRow + 2][currentCol].checkOccupied()) {
 	            listMove.add(new int[] { currentRow + 2, currentCol });
 	        }
 	        // Đi một ô
@@ -70,10 +65,7 @@ public class Pawn extends Piece {
 	        }
 	    } else { // Nước đi cho quân tốt trắng
 	        // Nước đi ban đầu
-	        if (firstMove && currentRow - 2 >= 0 && 
-	            !board.getTiles()[currentRow - 1][currentCol].checkOccupied() && 
-	            !board.getTiles()[currentRow - 2][currentCol].checkOccupied()) {
-	            listMove.add(new int[] { currentRow - 1, currentCol });
+	        if (currentRow ==6 && !board.getTiles()[currentRow - 2][currentCol].checkOccupied()) {
 	            listMove.add(new int[] { currentRow - 2, currentCol });
 	        }
 	        // Đi một ô
@@ -98,14 +90,6 @@ public class Pawn extends Piece {
 
 	public int getValue() {
 		return this.value;
-	}
-
-	public boolean getFirstMove() {
-		return this.firstMove;
-	}
-
-	public void setFirstMove() {
-		this.firstMove = false;
 	}
 	
 	  @Override
