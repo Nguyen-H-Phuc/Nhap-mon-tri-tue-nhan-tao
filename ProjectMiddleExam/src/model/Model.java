@@ -80,7 +80,7 @@ public class Model {
 			}
 			if (checkGameEnd(noCurrentPlayer)) {
 				System.out.println("Game over!");
-				System.out.println(currentPlayer.getColor()+ " win!!!");
+				System.out.println(currentPlayer.getColor() + " win!!!");
 				isPlaying = false; // Kết thúc game
 			}
 
@@ -99,15 +99,13 @@ public class Model {
 					currentPlayer.movePiece(board, board.getTile(row, col).getPiece(), new int[] { rowDes, colDes },
 							noCurrentPlayer);
 					setTurn(!getTurn());
+				} else {
+					System.out.println("Invalid move. Try again.");
 				}
-				else {
-					System.out.println("Invalid move. Try again.");}
 			} else {
 				System.out.println("khong co quan.");
 			}
-			
 
-			
 		}
 		scanner.close();
 	}
