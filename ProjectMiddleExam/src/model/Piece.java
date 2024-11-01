@@ -7,7 +7,7 @@ public abstract class Piece {
 	private String name;
 	private String color;
 	private boolean alive;
-	private int index; // position in pieces
+	private int index; // position in player's list
 	private int[] cords; // position in board, [0] is row, [1] is col
 
 	public Piece(String name, String color, int index) {
@@ -46,12 +46,8 @@ public abstract class Piece {
 	public int[] getCords() {
 		return cords;
 	}
-	
-	
 
 	public abstract String toString();
-
-	public abstract boolean isValidMove(int row, int col);
 
 	public abstract List<int[]> listValidMoves(Board board);
 

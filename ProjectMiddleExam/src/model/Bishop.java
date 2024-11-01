@@ -12,100 +12,91 @@ public class Bishop extends Piece {
 	}
 
 	@Override
-	public boolean isValidMove(int row, int col) {
-		int[] cords = this.getCords();
-		int currentRow = cords[0];
-		int currentCol = cords[1];
-		return Math.abs(currentCol - col) == Math.abs(currentRow - row);
-	}
-
-	@Override
 	public List<int[]> listValidMoves(Board board) {
-	    List<int[]> listMove = new ArrayList<>();
-	    int currentRow = this.getCords()[0];
-	    int currentCol = this.getCords()[1];
+		List<int[]> listMove = new ArrayList<>();
+		int currentRow = this.getCords()[0];
+		int currentCol = this.getCords()[1];
 
-	    // Đi chéo lên bên phải
-	    for (int i = 1; i < 8; i++) {
-	        int newRow = currentRow - i;
-	        int newCol = currentCol + i;
+		// Đi chéo lên bên phải
+		for (int i = 1; i < 8; i++) {
+			int newRow = currentRow - i;
+			int newCol = currentCol + i;
 
-	        if (newRow < 0 || newCol > 7) {
-	            break; // Dừng lại nếu ra ngoài bàn cờ
-	        }
-	        if (board.getTiles()[newRow][newCol].checkOccupied()) {
-	            if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
-	                listMove.add(new int[] { newRow, newCol }); // Bắt quân
-	            }
-	            break; // Dừng lại khi gặp quân cờ
-	        }
-	        listMove.add(new int[] { newRow, newCol });
-	    }
+			if (newRow < 0 || newCol > 7) {
+				break; // Dừng lại nếu ra ngoài bàn cờ
+			}
+			if (board.getTiles()[newRow][newCol].checkOccupied()) {
+				if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
+					listMove.add(new int[] { newRow, newCol }); // Bắt quân
+				}
+				break; // Dừng lại khi gặp quân cờ
+			}
+			listMove.add(new int[] { newRow, newCol });
+		}
 
-	    // Đi chéo lên bên trái
-	    for (int i = 1; i < 8; i++) {
-	        int newRow = currentRow - i;
-	        int newCol = currentCol - i;
+		// Đi chéo lên bên trái
+		for (int i = 1; i < 8; i++) {
+			int newRow = currentRow - i;
+			int newCol = currentCol - i;
 
-	        if (newRow < 0 || newCol < 0) {
-	            break; // Dừng lại nếu ra ngoài bàn cờ
-	        }
-	        if (board.getTiles()[newRow][newCol].checkOccupied()) {
-	            if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
-	                listMove.add(new int[] { newRow, newCol }); // Bắt quân
-	            }
-	            break; // Dừng lại khi gặp quân cờ
-	        }
-	        listMove.add(new int[] { newRow, newCol });
-	    }
+			if (newRow < 0 || newCol < 0) {
+				break; // Dừng lại nếu ra ngoài bàn cờ
+			}
+			if (board.getTiles()[newRow][newCol].checkOccupied()) {
+				if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
+					listMove.add(new int[] { newRow, newCol }); // Bắt quân
+				}
+				break; // Dừng lại khi gặp quân cờ
+			}
+			listMove.add(new int[] { newRow, newCol });
+		}
 
-	    // Đi chéo xuống bên phải
-	    for (int i = 1; i < 8; i++) {
-	        int newRow = currentRow + i;
-	        int newCol = currentCol + i;
+		// Đi chéo xuống bên phải
+		for (int i = 1; i < 8; i++) {
+			int newRow = currentRow + i;
+			int newCol = currentCol + i;
 
-	        if (newRow > 7 || newCol > 7) {
-	            break; // Dừng lại nếu ra ngoài bàn cờ
-	        }
-	        if (board.getTiles()[newRow][newCol].checkOccupied()) {
-	            if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
-	                listMove.add(new int[] { newRow, newCol }); // Bắt quân
-	            }
-	            break; // Dừng lại khi gặp quân cờ
-	        }
-	        listMove.add(new int[] { newRow, newCol });
-	    }
+			if (newRow > 7 || newCol > 7) {
+				break; // Dừng lại nếu ra ngoài bàn cờ
+			}
+			if (board.getTiles()[newRow][newCol].checkOccupied()) {
+				if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
+					listMove.add(new int[] { newRow, newCol }); // Bắt quân
+				}
+				break; // Dừng lại khi gặp quân cờ
+			}
+			listMove.add(new int[] { newRow, newCol });
+		}
 
-	    // Đi chéo xuống bên trái
-	    for (int i = 1; i < 8; i++) {
-	        int newRow = currentRow + i;
-	        int newCol = currentCol - i;
+		// Đi chéo xuống bên trái
+		for (int i = 1; i < 8; i++) {
+			int newRow = currentRow + i;
+			int newCol = currentCol - i;
 
-	        if (newRow > 7 || newCol < 0) {
-	            break; // Dừng lại nếu ra ngoài bàn cờ
-	        }
-	        if (board.getTiles()[newRow][newCol].checkOccupied()) {
-	            if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
-	                listMove.add(new int[] { newRow, newCol }); // Bắt quân
-	            }
-	            break; // Dừng lại khi gặp quân cờ
-	        }
-	        listMove.add(new int[] { newRow, newCol });
-	    }
+			if (newRow > 7 || newCol < 0) {
+				break; // Dừng lại nếu ra ngoài bàn cờ
+			}
+			if (board.getTiles()[newRow][newCol].checkOccupied()) {
+				if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
+					listMove.add(new int[] { newRow, newCol }); // Bắt quân
+				}
+				break; // Dừng lại khi gặp quân cờ
+			}
+			listMove.add(new int[] { newRow, newCol });
+		}
 
-	    return listMove;
+		return listMove;
 	}
-
 
 	public int getValue() {
 		return this.value;
 	}
-	
-    @Override
-    public String toString() {
-    	if(this.getColor().equals("Black")) {
-			   return "b";
-		   }
-        return "B"; // Ký hiệu cho quân Tượng
-    }
+
+	@Override
+	public String toString() {
+		if (this.getColor().equals("Black")) {
+			return "b";
+		}
+		return "B";
+	}
 }
