@@ -23,6 +23,10 @@ public class Player {
 		pieces.add(new Knight("Knight", color, 14));
 		pieces.add(new Rook("Rook", color, 15));
 	}
+	
+	public ArrayList<Piece> getPieces() {
+		return pieces;
+	}
 
 	public String getColor() {
 		return color;

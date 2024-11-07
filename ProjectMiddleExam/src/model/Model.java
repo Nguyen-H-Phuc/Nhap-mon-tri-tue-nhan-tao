@@ -25,6 +25,57 @@ public class Model {
 			board = new Board(player2, player1);
 	}
 
+	public Piece checkPromotion() {
+		for (int i = 0; i < 8; i++) {
+			// Kiểm tra hàng đầu (0) cho quân tốt đen
+			if (board.getTile(0, i).getPiece() != null && board.getTile(0, i).getPiece().getName().equals("Pawn")) {
+				return board.getTile(0, i).getPiece();
+			}
+			// Kiểm tra hàng cuối (7) cho quân tốt trắng
+			if (board.getTile(7, i).getPiece() != null && board.getTile(7, i).getPiece().getName().equals("Pawn")) {
+				return board.getTile(7, i).getPiece();
+			}
+		}
+		return null;
+	}
+
+	public void promote(Piece pawn, int choice) {
+		Piece piece = null;
+		int row = pawn.getCords()[0];
+		int col = pawn.getCords()[1];
+
+		// Tạo quân cờ mới dựa trên lựa chọn
+		switch (choice) {
+		case 1:
+			piece = new Queen("Queen", pawn.getColor(), pawn.getIndex());
+			break;
+		case 2:
+			piece = new Rook("Rook", pawn.getColor(), pawn.getIndex());
+			break;
+		case 3:
+			piece = new Bishop("Bishop", pawn.getColor(), pawn.getIndex());
+			break;
+		case 4:
+			piece = new Knight("Knight", pawn.getColor(), pawn.getIndex());
+			break;
+		default:
+			System.out.println("Lựa chọn không hợp lệ!");
+			return; // Thoát phương thức nếu lựa chọn không hợp lệ
+		}
+
+		// Thiết lập toạ độ cho quân cờ mới
+		if (piece != null) {
+			piece.setCords(row, col);
+			board.setTile(piece, row, col);
+			if (row == 0) {
+				player1.getPieces().set(pawn.getIndex(), piece);
+			} else {
+				player2.getPieces().set(pawn.getIndex(), piece);
+			}
+
+		}
+	}
+
 	public void setPlaying(boolean b) {
 		isPlaying = b;
 	}
@@ -78,11 +129,6 @@ public class Model {
 				noCurrentPlayer = this.getPlayer1();
 				System.out.println("Turn: " + "Black");
 			}
-			if (checkGameEnd(noCurrentPlayer)) {
-				System.out.println("Game over!");
-				System.out.println(currentPlayer.getColor() + " win!!!");
-				isPlaying = false; // Kết thúc game
-			}
 
 			// Chọn quân cờ
 			System.out.print("Choose your piece (e.g., 02 to 03): ");
@@ -98,6 +144,17 @@ public class Model {
 				if (processMove(getBoard(), row, col, rowDes, colDes)) {
 					currentPlayer.movePiece(board, board.getTile(row, col).getPiece(), new int[] { rowDes, colDes },
 							noCurrentPlayer);
+					if (checkGameEnd(noCurrentPlayer)) {
+						System.out.println("Game over!");
+						System.out.println(currentPlayer.getColor() + " win!!!");
+						isPlaying = false; // Kết thúc game
+					}
+					if (checkPromotion() != null) {
+						System.out.println("Chọn quân để phong cấp (1: Hậu, 2: Xe, 3: Tượng, 4: Mã): ");
+						int choice = scanner.nextInt();
+						promote(checkPromotion(), choice);
+
+					}
 					setTurn(!getTurn());
 				} else {
 					System.out.println("Invalid move. Try again.");
@@ -111,7 +168,7 @@ public class Model {
 	}
 
 	private boolean processMove(Board b, int row, int col, int rowDes, int colDes) {
-		for (int[] des : b.getTiles()[row][col].getPiece().listValidMoves(b)) {
+		for (int[] des : b.getTile(row, col).getPiece().listValidMoves(b)) {
 			if (des[0] == rowDes && des[1] == colDes) {
 				return true;
 			}
