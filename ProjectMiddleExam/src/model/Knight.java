@@ -31,8 +31,8 @@ public class Knight extends Piece {
 
 			// Kiểm tra xem vị trí có nằm trong bàn cờ không
 			if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
-				if (!board.getTiles()[newRow][newCol].checkOccupied()
-						|| !board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
+				if (!board.getTile(newRow,newCol).checkOccupied()
+						|| !board.getTile(newRow,newCol).getPiece().getColor().equals(this.getColor())) {
 					listMove.add(new int[] { newRow, newCol });
 				}
 			}

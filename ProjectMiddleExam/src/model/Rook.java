@@ -21,10 +21,10 @@ public class Rook extends Piece {
 
 		// Đi về phải
 		for (int x = currentCol + 1; x < 8; x++) {
-			if (!board.getTiles()[currentRow][x].checkOccupied()) {
+			if (!board.getTile(currentRow, x).checkOccupied()) {
 				listMove.add(new int[] { currentRow, x });
 			} else {
-				if (!board.getTiles()[currentRow][x].getPiece().getColor().equals(this.getColor())) {
+				if (!board.getTile(currentRow, x).getPiece().getColor().equals(this.getColor())) {
 					listMove.add(new int[] { currentRow, x });
 				}
 				break; // Dừng lại khi gặp quân cờ
@@ -33,10 +33,10 @@ public class Rook extends Piece {
 
 		// Đi về trái
 		for (int x = currentCol - 1; x >= 0; x--) {
-			if (!board.getTiles()[currentRow][x].checkOccupied()) {
+			if (!board.getTile(currentRow, x).checkOccupied()) {
 				listMove.add(new int[] { currentRow, x });
 			} else {
-				if (!board.getTiles()[currentRow][x].getPiece().getColor().equals(this.getColor())) {
+				if (!board.getTile(currentRow, x).getPiece().getColor().equals(this.getColor())) {
 					listMove.add(new int[] { currentRow, x });
 				}
 				break; // Dừng lại khi gặp quân cờ
@@ -45,10 +45,10 @@ public class Rook extends Piece {
 
 		// Đi xuống
 		for (int x = currentRow + 1; x < 8; x++) {
-			if (!board.getTiles()[x][currentCol].checkOccupied()) {
+			if (!board.getTile(x, currentCol).checkOccupied()) {
 				listMove.add(new int[] { x, currentCol });
 			} else {
-				if (!board.getTiles()[x][currentCol].getPiece().getColor().equals(this.getColor())) {
+				if (!board.getTile(x, currentCol).getPiece().getColor().equals(this.getColor())) {
 					listMove.add(new int[] { x, currentCol });
 				}
 				break; // Dừng lại khi gặp quân cờ
@@ -57,10 +57,10 @@ public class Rook extends Piece {
 
 		// Đi lên
 		for (int x = currentRow - 1; x >= 0; x--) {
-			if (!board.getTiles()[x][currentCol].checkOccupied()) {
+			if (!board.getTile(x, currentCol).checkOccupied()) {
 				listMove.add(new int[] { x, currentCol });
 			} else {
-				if (!board.getTiles()[x][currentCol].getPiece().getColor().equals(this.getColor())) {
+				if (!board.getTile(x, currentCol).getPiece().getColor().equals(this.getColor())) {
 					listMove.add(new int[] { x, currentCol });
 				}
 				break; // Dừng lại khi gặp quân cờ

@@ -40,9 +40,9 @@ public class Queen extends Piece {
 				}
 
 				// Kiểm tra xem ô đó có bị chiếm không
-				if (board.getTiles()[newRow][newCol].checkOccupied()) {
+				if (board.getTile(newRow,newCol).checkOccupied()) {
 					// Nếu ô đó bị chiếm bởi quân cờ đối phương, thêm vào danh sách (có thể ăn)
-					if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
+					if (!board.getTile(newRow,newCol).getPiece().getColor().equals(this.getColor())) {
 						listMove.add(new int[] { newRow, newCol }); // Nước đi ăn
 					}
 					break; // Dừng di chuyển trong hướng này

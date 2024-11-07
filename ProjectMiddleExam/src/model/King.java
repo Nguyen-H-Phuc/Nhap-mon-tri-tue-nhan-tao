@@ -36,8 +36,8 @@ public class King extends Piece {
 			// Check if the new position is within bounds
 			if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
 				// Check if the tile is occupied
-				if (!board.getTiles()[newRow][newCol].checkOccupied()
-						|| !board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
+				if (!board.getTile(newRow,newCol).checkOccupied()
+						|| !!board.getTile(newRow,newCol).getPiece().getColor().equals(this.getColor())) {
 					listMove.add(new int[] { newRow, newCol }); // Capture move or empty tile
 				}
 			}
