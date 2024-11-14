@@ -17,7 +17,8 @@ public class Knight extends Piece {
 		List<int[]> listMove = new ArrayList<>();
 		int currentRow = this.getCords()[0];
 		int currentCol = this.getCords()[1];
-
+		
+		if(getAlive()==true) {
 		// Các vị trí mà quân mã có thể di chuyển đến
 		int[][] possibleMoves = { { currentRow - 2, currentCol - 1 }, { currentRow - 2, currentCol + 1 },
 				{ currentRow + 2, currentCol - 1 }, { currentRow + 2, currentCol + 1 },
@@ -36,7 +37,7 @@ public class Knight extends Piece {
 					listMove.add(new int[] { newRow, newCol });
 				}
 			}
-		}
+		}}
 
 		return listMove;
 	}
@@ -48,7 +49,7 @@ public class Knight extends Piece {
 	@Override
 	public String toString() {
 		if (this.getColor().equals("Black")) {
-			return "k";
+			return "n";
 		}
 		return "N"; // Ký hiệu cho quân Mã
 	}

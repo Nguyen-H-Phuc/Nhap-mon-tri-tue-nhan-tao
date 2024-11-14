@@ -17,6 +17,7 @@ public class Bishop extends Piece {
 		int currentRow = this.getCords()[0];
 		int currentCol = this.getCords()[1];
 
+		if(getAlive()==true) {
 		// Đi chéo lên bên phải
 		for (int i = 1; i < 8; i++) {
 			int newRow = currentRow - i;
@@ -83,7 +84,7 @@ public class Bishop extends Piece {
 				break; // Dừng lại khi gặp quân cờ
 			}
 			listMove.add(new int[] { newRow, newCol });
-		}
+		}}
 
 		return listMove;
 	}

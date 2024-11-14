@@ -7,6 +7,7 @@ public abstract class Piece {
 	private String name;
 	private String color;
 	private boolean alive;
+	private boolean hasMoved;
 	private int index; // position in player's list
 	private int[] cords; // position in board, [0] is row, [1] is col
 
@@ -14,6 +15,7 @@ public abstract class Piece {
 		this.name = name;
 		this.color = color;
 		this.alive = true;
+		this.hasMoved = false;
 		this.index = index;
 		this.cords = new int[2];
 	}
@@ -29,9 +31,21 @@ public abstract class Piece {
 	public boolean getAlive() {
 		return alive;
 	}
+	
+	public void setAlive() {
+		alive = true;
+	}
 
 	public void setDead() {
 		alive = false;
+	}
+
+	public boolean isHasMoved() {
+		return hasMoved;
+	}
+
+	public void setHasMoved(boolean hasMove) {
+		this.hasMoved = hasMove;
 	}
 
 	public int getIndex() {

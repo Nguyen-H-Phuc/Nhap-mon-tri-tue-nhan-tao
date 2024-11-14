@@ -17,7 +17,7 @@ public class Queen extends Piece {
 		List<int[]> listMove = new ArrayList<>();
 		int currentRow = this.getCords()[0];
 		int currentCol = this.getCords()[1];
-
+		if(getAlive()==true) {
 		// Directions: horizontal, vertical, and diagonal
 		int[][] directions = { { 1, 0 }, // Down
 				{ -1, 0 }, // Up
@@ -51,7 +51,7 @@ public class Queen extends Piece {
 				// Nếu ô đó trống, thêm nước đi vào danh sách
 				listMove.add(new int[] { newRow, newCol });
 			}
-		}
+		}}
 
 		return listMove;
 	}

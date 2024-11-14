@@ -7,6 +7,7 @@ import java.util.List;
 public class King extends Piece {
 	private int value;
 
+
 	public King(String name, String color, int index) {
 		super(name, color, index);
 		value = 1000000;
@@ -37,7 +38,7 @@ public class King extends Piece {
 			if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
 				// Check if the tile is occupied
 				if (!board.getTile(newRow,newCol).checkOccupied()
-						|| !!board.getTile(newRow,newCol).getPiece().getColor().equals(this.getColor())) {
+						|| !board.getTile(newRow,newCol).getPiece().getColor().equals(this.getColor())) {
 					listMove.add(new int[] { newRow, newCol }); // Capture move or empty tile
 				}
 			}
@@ -49,12 +50,13 @@ public class King extends Piece {
 	public int getValue() {
 		return this.value;
 	}
+	
 
 	@Override
 	public String toString() {
 		if (this.getColor().equals("Black")) {
 			return "k";
 		}
-		return "K"; // Ký hiệu cho quân Vua
+		return "K";
 	}
 }

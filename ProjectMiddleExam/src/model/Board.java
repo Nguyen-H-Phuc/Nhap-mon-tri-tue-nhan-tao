@@ -28,6 +28,7 @@ public class Board {
 			p2.getPiece(i + 8).setCords(0, i);
 		}
 	}
+	
 
 	public Tile[][] getTiles() {
 		return tiles; // Trả về mảng 2 chiều

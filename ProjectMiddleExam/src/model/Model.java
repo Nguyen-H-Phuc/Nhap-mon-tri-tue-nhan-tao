@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 import view.PieceDisplay;
@@ -76,6 +77,124 @@ public class Model {
 		}
 	}
 
+	public boolean isCheck(Player player1, Player player2) {
+		int[] kingPosition = player1.getPiece(12).getCords(); // Giả định chỉ số của vua là 12
+		for (Piece piece : player2.getPieces()) {
+			for (int[] validMove : piece.listValidMoves(board)) {
+				if (Arrays.equals(validMove, kingPosition)) {
+					return true; // Vua bị chiếu
+				}
+			}
+		}
+		return false; // Vua không bị chiếu
+	}
+
+	public boolean isCheckmate(Player player1, Player player2) {
+		// Kiểm tra nếu đang bị chiếu
+		if (!isCheck(player1, player2)) {
+			return false; // Không bị chiếu, không phải chiếu bí
+		}
+
+		// Duyệt qua tất cả các quân cờ của người chơi bị chiếu
+		for (Piece piece : player1.getPieces()) {
+			int[] originalPosition = piece.getCords().clone();
+			System.out.println(originalPosition[0]);
+			System.out.println(originalPosition[1]);
+
+			for (int[] move : piece.listValidMoves(board)) {
+				// Lưu trữ trạng thái quân cờ bị ăn, nếu có
+				Piece targetPiece = board.getTile(move[0], move[1]).getPiece();
+
+				// Thực hiện nước đi tạm thời
+				board.setTile(null, originalPosition[0], originalPosition[1]);
+				board.setTile(piece, move[0], move[1]);
+				piece.setCords(move[0], move[1]);
+
+				// Kiểm tra nếu vua không còn bị chiếu
+				if (!isCheck(player1, player2)) {
+					// Hoàn tác nước đi
+					board.setTile(targetPiece, move[0], move[1]); // Đặt lại quân cờ bị ăn (nếu có)
+					board.setTile(piece, originalPosition[0], originalPosition[1]);
+					piece.setCords(originalPosition[0], originalPosition[1]);
+
+					return false; // Không phải chiếu bí, có thể thoát chiếu
+				}
+
+				// Hoàn tác nước đi nếu vẫn còn bị chiếu
+				board.setTile(targetPiece, move[0], move[1]); // Đặt lại quân cờ bị ăn (nếu có)
+				board.setTile(piece, originalPosition[0], originalPosition[1]);
+				piece.setCords(originalPosition[0], originalPosition[1]);
+			}
+		}
+
+		return true; // Không có nước đi nào thoát khỏi chiếu, đây là chiếu bí
+	}
+
+	public boolean castling(Board board, Player player1, Player player2, int colDes) {
+		if (colDes != 6 && colDes != 2) {
+			return false;
+		}
+
+		boolean isKingside = (colDes == 6);
+
+		Piece king = player1.getPiece(12);
+		int row = king.getCords()[0];
+
+		int rookCol = isKingside ? 7 : 0; // Xe vua (hàng bên phải) ở cột 7, Xe hậu (trái) ở cột 0
+		int kingCol = 4; // Vua ban đầu ở cột 4
+		int newKingCol = isKingside ? 6 : 2; // Vị trí mới của Vua
+
+		Piece rook = board.getTile(row, rookCol).getPiece();
+
+		// Kiểm tra xem Vua và Xe có còn ở vị trí ban đầu không
+		if (king.isHasMoved() || rook == null || rook.isHasMoved()) {
+			return false;
+		}
+
+		// Kiểm tra các ô giữa Vua và Xe
+		int step = isKingside ? 1 : -1;
+		for (int col = kingCol + step; col != rookCol; col += step) {
+			if (board.getTile(row, col).checkOccupied()) {
+				return false;
+			}
+		}
+
+		// Kiểm tra các ô Vua đi qua không bị chiếu
+		int[] originalCords = king.getCords().clone();
+		for (int col = kingCol; col != newKingCol + step; col += step) {
+			// Di chuyển vua tạm thời
+			board.setTile(null, originalCords[0], originalCords[1]);
+			board.setTile(king, row, col);
+			king.setCords(row, col);
+
+			// Kiểm tra nếu vua bị chiếu
+			if (isCheck(player1, player2)) {
+				// Hoàn tác nước đi
+				board.setTile(king, originalCords[0], originalCords[1]);
+				board.setTile(null, row, col);
+				king.setCords(originalCords[0], originalCords[1]);
+				return false;
+			}
+			// Hoàn tác nước đi sau mỗi bước kiểm tra
+			board.setTile(king, originalCords[0], originalCords[1]);
+			board.setTile(null, row, col);
+			king.setCords(originalCords[0], originalCords[1]);
+		}
+
+		king.setHasMoved(true);
+		rook.setHasMoved(true);
+
+		board.setTile(rook, row, kingCol + step);
+		board.setTile(null, row, rookCol);
+
+		if (isKingside) {
+			player1.getPiece(15).setCords(row, kingCol + step);
+		} else {
+			player1.getPiece(8).setCords(row, kingCol + step);
+		}
+		return true;
+	}
+
 	public void setPlaying(boolean b) {
 		isPlaying = b;
 	}
@@ -116,17 +235,17 @@ public class Model {
 		Scanner scanner = new Scanner(System.in);
 		setPlaying(true);
 		Player currentPlayer;
-		Player noCurrentPlayer;
+		Player opponent;
 
-		while (isPlaying) {
+		while (getPlaying()) {
 			System.out.println(getBoard()); // In ra bàn cờ hiện tại
 			if (getTurn()) {
 				currentPlayer = this.getPlayer1();
-				noCurrentPlayer = this.getPlayer2();
+				opponent = this.getPlayer2();
 				System.out.println("Turn: " + "White");
 			} else {
 				currentPlayer = this.getPlayer2();
-				noCurrentPlayer = this.getPlayer1();
+				opponent = this.getPlayer1();
 				System.out.println("Turn: " + "Black");
 			}
 
@@ -141,19 +260,20 @@ public class Model {
 
 			if (board.getTile(row, col).checkOccupied()
 					&& board.getTile(row, col).getPiece().getColor().equals(currentPlayer.getColor())) {
-				if (processMove(getBoard(), row, col, rowDes, colDes)) {
+				if (processMove(getBoard(), row, col, rowDes, colDes, currentPlayer, opponent)) {
 					currentPlayer.movePiece(board, board.getTile(row, col).getPiece(), new int[] { rowDes, colDes },
-							noCurrentPlayer);
-					if (checkGameEnd(noCurrentPlayer)) {
-						System.out.println("Game over!");
-						System.out.println(currentPlayer.getColor() + " win!!!");
-						isPlaying = false; // Kết thúc game
-					}
+							opponent);
+
 					if (checkPromotion() != null) {
 						System.out.println("Chọn quân để phong cấp (1: Hậu, 2: Xe, 3: Tượng, 4: Mã): ");
 						int choice = scanner.nextInt();
 						promote(checkPromotion(), choice);
+					}
 
+					if (isCheckmate(opponent, currentPlayer)) {
+						System.out.println("Game over!");
+						System.out.println(currentPlayer.getColor() + " win!!!");
+						setPlaying(!getPlaying());
 					}
 					setTurn(!getTurn());
 				} else {
@@ -167,7 +287,10 @@ public class Model {
 		scanner.close();
 	}
 
-	private boolean processMove(Board b, int row, int col, int rowDes, int colDes) {
+	private boolean processMove(Board b, int row, int col, int rowDes, int colDes, Player player1, Player player2) {
+		if (b.getTile(row, col).getPiece().getName().equals("King") && !b.getTile(row, col).getPiece().isHasMoved()) {
+			return castling(b, player1, player2, colDes);
+		}
 		for (int[] des : b.getTile(row, col).getPiece().listValidMoves(b)) {
 			if (des[0] == rowDes && des[1] == colDes) {
 				return true;
@@ -176,8 +299,8 @@ public class Model {
 		return false;
 	}
 
-	private boolean checkGameEnd(Player p) {
-		return p.checkWin(p);
+	private boolean checkGameEnd(Player player1, Player player2) {
+		return isCheckmate(player1, player2);
 	}
 
 	public static void main(String[] args) {
@@ -187,3 +310,56 @@ public class Model {
 		m.startGame();
 	}
 }
+//63
+//43
+//13
+//33
+//76
+//55
+//06
+//25
+//62
+//42
+//02
+//35
+//42
+//33
+//35
+//71
+//73
+//40
+//12
+//22
+//33
+//22
+//71
+//44
+//22
+//12
+//03
+//13
+//12
+//02
+
+//60
+//40
+//17
+//37
+//61
+//41
+//16
+//36
+//62
+//42
+//06
+//27
+//71
+//50
+//05
+//16
+//72
+//61
+//04
+//06
+//73
+//62

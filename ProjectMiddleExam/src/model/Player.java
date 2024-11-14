@@ -55,6 +55,7 @@ public class Player {
 		board.setTile(piece, newCords[0], newCords[1]);
 		// Updates the New Cords of the Moved Piece
 		pieces.get(piece.getIndex()).setCords(newCords[0], newCords[1]);
+		pieces.get(piece.getIndex()).setHasMoved(true);
 	}
 
 	@Override

@@ -17,10 +17,11 @@ public class Pawn extends Piece {
 		int[] cords = this.getCords();
 		int currentRow = cords[0];
 		int currentCol = cords[1];
-
+if(getAlive()==true) {
 		if (getColor().equalsIgnoreCase("Black")) { // Nước đi cho quân tốt đen
 			// Nước đi ban đầu
-			if (currentRow == 1 && !board.getTile(currentRow + 2, currentCol).checkOccupied()) {
+			if (currentRow == 1 && !board.getTile(currentRow + 2, currentCol).checkOccupied() 
+					&& !board.getTile(currentRow + 1, currentCol).checkOccupied()) {
 				listMove.add(new int[] { currentRow + 2, currentCol });
 			}
 			// Đi một ô
@@ -40,7 +41,8 @@ public class Pawn extends Piece {
 			}
 		} else { // Nước đi cho quân tốt trắng
 			// Nước đi ban đầu
-			if (currentRow == 6 && !board.getTile(currentRow - 2, currentCol).checkOccupied()) {
+			if (currentRow == 6 && !board.getTile(currentRow - 2, currentCol).checkOccupied() 
+					&& !board.getTile(currentRow - 1, currentCol).checkOccupied()) {
 				listMove.add(new int[] { currentRow - 2, currentCol });
 			}
 			// Đi một ô
@@ -58,7 +60,7 @@ public class Pawn extends Piece {
 					listMove.add(new int[] { currentRow - 1, currentCol - 1 });
 				}
 			}
-		}
+		}}
 		return listMove;
 	}
 
