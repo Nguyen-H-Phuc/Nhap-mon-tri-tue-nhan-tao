@@ -27,13 +27,14 @@ public class Controller {
 	}
 
 	private void initializeTeams() {
-		model.setPlaying(true);
+		getModel().setPlaying(true);
 		initializeListeners();
 		initializeTiles();
 
-		model.setCurP(null);
-		model.addPlayers("White");
-		model.setTurn(true);
+		getModel().setCurP(null);
+		getModel().addPlayers("White");
+		getModel().setTurn(true);
+		
 	}
 
 	public void initializeListeners() {
@@ -44,86 +45,90 @@ public class Controller {
 					view.getPiece(i, j).addMouseListener(new MouseListener() {
 
 						
-
+						Model m;
+						View v;
+						Player p1;
+						Player p2;
 						@Override
 						public void mouseClicked(MouseEvent e) {
-							Model model = getModel();
-							View view = getView();
-							Player p1 = model.getPlayer1();
-							Player p2 = model.getPlayer2();
-							if (model.getTurn() && p1.getColor().equals(((PieceDisplay) e.getSource()).getColor())) {
-								if (model.getCurP() == null) {
-
-									model.setCurP((PieceDisplay) e.getSource());
+							 m = getModel();
+							 v = getView();
+							 p1 = model.getPlayer1();
+							 p2 = model.getPlayer2();
+							if (m.getTurn() && p1.getColor().equals(((PieceDisplay) e.getSource()).getColor())) {
+								if (m.getCurP() == null) {
+									m.setCurP((PieceDisplay) e.getSource());
+									System.out.println(m.getCurP().getPosition());
 									// Highlight valid moves in green
-									for (int[] validMove : p1.getPiece(model.getCurP().getPosition())
-											.listValidMoves(model.getBoard())) {
-										view.getPanelTile(validMove[0], validMove[1]).setBackground(Color.GREEN);
+									for (int[] validMove : p1.getPiece(m.getCurP().getPosition())
+											.listValidMoves(m.getBoard())) {
+										v.getPanelTile(validMove[0], validMove[1]).setBackground(Color.GREEN);
+										System.out.println(m.getBoard().toString());
 									}
-								} else if (e.getSource() == model.getCurP()) {
+								} else if (e.getSource() == m.getCurP()) {
 
-									view.recolorTiles();
-									model.setCurP(null);
+									v.recolorTiles();
+									m.setCurP(null);
 								}
 							} else if (((JPanel) ((PieceDisplay) e.getSource()).getParent())
-									.getBackground() == Color.green && model.getCurP() != null && model.getTurn()
-									&& ((e.getSource() != model.getCurP())
+									.getBackground() == Color.GREEN && m.getCurP() != null && m.getTurn()
+									&& ((e.getSource() != m.getCurP())
 											&& (((PieceDisplay) e.getSource()).getColor()).equals(p2.getColor()))) {
-								view.recolorTiles();
+								v.recolorTiles();
 								Object o = e.getComponent().getParent();
 								int[] newCords = getCoordinates(o);
 
-								p1.movePiece(model.getBoard(), p1.getPiece(model.getCurP().getPosition()), newCords,
+								p1.movePiece(m.getBoard(), p1.getPiece(m.getCurP().getPosition()), newCords,
 										p2);
-								model.setPlaying(!p1.checkWin(p2));
+								m.setPlaying(!p1.checkWin(p2));
 
-								int destX = view.getTileCoordX((JPanel) ((PieceDisplay) e.getSource()).getParent());
-								int destY = view.getTileCoordY((JPanel) ((PieceDisplay) e.getSource()).getParent());
+								int destX = v.getTileCoordX((JPanel) ((PieceDisplay) e.getSource()).getParent());
+								int destY = v.getTileCoordY((JPanel) ((PieceDisplay) e.getSource()).getParent());
 
 								((PieceDisplay) e.getSource()).getParent().remove(0);
-								view.setPieceLocation(model.getCurP(), view.getPanelTile(destY, destX));
+								v.setPieceLocation(m.getCurP(), v.getPanelTile(destY, destX));
 
 								endTurn();
-								model.setCurP(null);
-								endGame(model.getPlaying());
+								m.setCurP(null);
+								endGame(m.getPlaying());
 
 							}
 
-							else if (!model.getTurn() && p2.getColor().equals(((PieceDisplay) e.getSource()).getColor())) {
-								if (model.getCurP() == null) {
+							else if (!m.getTurn() && p2.getColor().equals(((PieceDisplay) e.getSource()).getColor())) {
+								if (m.getCurP() == null) {
 									// Select the piece
-									model.setCurP((PieceDisplay) e.getSource());
+									m.setCurP((PieceDisplay) e.getSource());
 									// Highlight valid moves in green
-									for (int[] validMove : p2.getPiece(model.getCurP().getPosition())
-											.listValidMoves(model.getBoard())) {
-										view.getPanelTile(validMove[0], validMove[1]).setBackground(Color.GREEN);
+									for (int[] validMove : p2.getPiece(m.getCurP().getPosition())
+											.listValidMoves(m.getBoard())) {
+										v.getPanelTile(validMove[0], validMove[1]).setBackground(Color.GREEN);
 									}
-								} else if (e.getSource() == model.getCurP()) {
+								} else if (e.getSource() == m.getCurP()) {
 									// Deselect if clicked again
-									view.recolorTiles();
-									model.setCurP(null);
+									v.recolorTiles();
+									m.setCurP(null);
 								}
 							} else if (((JPanel) ((PieceDisplay) e.getSource()).getParent())
-									.getBackground() == Color.green && model.getCurP() != null && model.getTurn()
-									&& ((e.getSource() != model.getCurP())
-											&& (((PieceDisplay) e.getSource()).getColor()).equals(p2.getColor()))) {
-								view.recolorTiles();
+									.getBackground() == Color.GREEN && m.getCurP() != null && !m.getTurn()
+									&& ((e.getSource() != m.getCurP())
+											&& (((PieceDisplay) e.getSource()).getColor()).equals(p1.getColor()))) {
+								v.recolorTiles();
 								Object o = e.getComponent().getParent();
 								int[] newCords = getCoordinates(o);
 
-								p2.movePiece(model.getBoard(), p2.getPiece(model.getCurP().getPosition()), newCords,
-										p2);
-								model.setPlaying(!p2.checkWin(p1));
+								p2.movePiece(m.getBoard(), p2.getPiece(m.getCurP().getPosition()), newCords,
+										p1);
+								m.setPlaying(!p2.checkWin(p1));
 
-								int destX = view.getTileCoordX((JPanel) ((PieceDisplay) e.getSource()).getParent());
-								int destY = view.getTileCoordY((JPanel) ((PieceDisplay) e.getSource()).getParent());
+								int destX = v.getTileCoordX((JPanel) ((PieceDisplay) e.getSource()).getParent());
+								int destY = v.getTileCoordY((JPanel) ((PieceDisplay) e.getSource()).getParent());
 
 								((PieceDisplay) e.getSource()).getParent().remove(0);
-								view.setPieceLocation(model.getCurP(), view.getPanelTile(destY, destX));
+								v.setPieceLocation(m.getCurP(), v.getPanelTile(destY, destX));
 
 								endTurn();
-								model.setCurP(null);
-								endGame(model.getPlaying());
+								m.setCurP(null);
+								endGame(m.getPlaying());
 
 							}
 						}
@@ -195,12 +200,10 @@ public class Controller {
 						} else if (!m.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
 							if (m.getCurP() != null) {
 								if (e.getSource() == m.getCurP().getParent()) {
-
 									m.setCurP(null);
 								}
 
 								else if (((JPanel) e.getSource()).getComponentCount() != 0) {
-
 									m.setCurP(null);
 								} else {
 									view.recolorTiles();
@@ -258,9 +261,9 @@ public class Controller {
 	public void removeListeners() {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				if (view.getPiece(i, j) != null) {
-					view.getPiece(i, j).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-					view.getPiece(i, j).removeMouseListener(view.getPiece(i, j).getMouseListeners()[0]);
+				if (getView().getPiece(i, j) != null) {
+					getView().getPiece(i, j).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					getView().getPiece(i, j).removeMouseListener(getView().getPiece(i, j).getMouseListeners()[0]);
 				}
 			}
 		}
@@ -268,11 +271,11 @@ public class Controller {
 
 	public void endGame(boolean bWin) {
 		if (!bWin) {
-			Model m = model;
+			Model m = getModel();
 			if (m.getPlayer1().checkWin(m.getPlayer2())) {
-				view.setTurnLabelText("Player 1 wins!");
+				getView().setTurnLabelText("Player 1 wins!");
 			} else
-				view.setTurnLabelText("Player 2 wins !");
+				getView().setTurnLabelText("Player 2 wins !");
 
 			removeListeners();
 		}
@@ -285,8 +288,8 @@ public class Controller {
 	public int[] getCoordinates(Object o) {
 		int[] newCords;
 		newCords = new int[2];
-		newCords[0] = view.getTileCoordX(o);
-		newCords[1] = view.getTileCoordY(o);
+		newCords[0] = view.getTileCoordY(o);
+		newCords[1] = view.getTileCoordX(o);
 		return newCords;
 	}
 	

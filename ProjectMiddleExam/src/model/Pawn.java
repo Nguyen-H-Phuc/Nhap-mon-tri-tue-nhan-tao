@@ -17,7 +17,7 @@ public class Pawn extends Piece {
 		int[] cords = this.getCords();
 		int currentRow = cords[0];
 		int currentCol = cords[1];
-if(getAlive()==true) {
+		if(getAlive()==true) {
 		if (getColor().equalsIgnoreCase("Black")) { // Nước đi cho quân tốt đen
 			// Nước đi ban đầu
 			if (currentRow == 1 && !board.getTile(currentRow + 2, currentCol).checkOccupied() 

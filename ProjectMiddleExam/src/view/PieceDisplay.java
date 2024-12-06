@@ -13,9 +13,10 @@ public class PieceDisplay extends JLabel {
 
     public PieceDisplay(String name, int position, String c) {
         setPreferredSize(new Dimension(100, 100));  // Sửa lại kích thước để khớp với ô 100x100
-        name = name;
-        position = position;
-        colS = c;
+        this.name = name;
+        this.position = position;
+        this.colS = c;
+
 
         URL imgIconUrl = null;
         if (c.equals("White")) {

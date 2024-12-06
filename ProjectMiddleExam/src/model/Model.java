@@ -98,8 +98,6 @@ public class Model {
 		// Duyệt qua tất cả các quân cờ của người chơi bị chiếu
 		for (Piece piece : player1.getPieces()) {
 			int[] originalPosition = piece.getCords().clone();
-			System.out.println(originalPosition[0]);
-			System.out.println(originalPosition[1]);
 
 			for (int[] move : piece.listValidMoves(board)) {
 				// Lưu trữ trạng thái quân cờ bị ăn, nếu có
