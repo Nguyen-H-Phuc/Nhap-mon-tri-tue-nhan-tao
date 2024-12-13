@@ -5,11 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Queen extends Piece {
-	private int value;
+
 
 	public Queen(String name, String color, int index) {
-		super(name, color, index);
-		this.value = 9;
+		super(name, color, index, 900);
+	}
+
+	public Queen(Queen originalPiece) {
+		super(originalPiece);
 	}
 
 	@Override
@@ -56,9 +59,6 @@ public class Queen extends Piece {
 		return listMove;
 	}
 
-	public int getValue() {
-		return this.value;
-	}
 
 	@Override
 	public String toString() {

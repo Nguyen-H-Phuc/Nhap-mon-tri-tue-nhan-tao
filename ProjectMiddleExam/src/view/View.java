@@ -3,37 +3,40 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class View {
 	private JFrame frame;
-
 	private JPanel gameBoard;
 	private JPanel[][] tileSet;
 	private int[][] tileCoordsX;
 	private int[][] tileCoordsY;
-
 	private JLabel turnLabel;
 	private JPanel starterPanel;
-
 	private JPanel panel;
-
 	private PieceDisplay[][] pieces;
-
 	private JPanel topPanel;
+	private JPanel rightPanel;
+	private JPanel leftPanel;
+	private JPanel bottomPanel, pieceLeftPanel, pieceRightPanel;
 
+    
 	public View() {
 		turnLabel = new JLabel("San sang!");
-
 		frame = new JFrame("Chess");
-		frame.setSize(900, 800);
+		frame.setSize(1000, 825);
 		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout()); 
@@ -76,6 +79,7 @@ public class View {
 		// TOP Panel
 		topPanel = new JPanel();
 		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+		
 		JLabel titleBar = new JLabel("Chess");
 		titleBar.setFont(new Font("Arial", Font.BOLD, 20));
 		titleBar.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -83,14 +87,27 @@ public class View {
 		topPanel.add(Box.createGlue());
 		topPanel.add(titleBar);
 		topPanel.add(Box.createGlue());
+		
 		turnLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		topPanel.add(turnLabel);
 		topPanel.add(Box.createGlue());
 
-		topPanel.setPreferredSize(new Dimension(900, 80));
+		topPanel.setPreferredSize(new Dimension(900, 80));			
+		
+		rightPanel = new JPanel();
+		rightPanel.setPreferredSize(new Dimension(100, 800));
 
+		leftPanel = new JPanel();
+		leftPanel.setPreferredSize(new Dimension(100, 800));
+		
+		bottomPanel = new JPanel();
+		bottomPanel.setPreferredSize(new Dimension(900, 25));
 		frame.add(topPanel, BorderLayout.NORTH);
 		frame.add(gameBoard, BorderLayout.CENTER);
+		frame.add(rightPanel, BorderLayout.EAST);
+		frame.add(leftPanel, BorderLayout.WEST);
+		frame.add(bottomPanel, BorderLayout.SOUTH);
+		
 
 		pieces = new PieceDisplay[2][16];
 		initializePieces();
@@ -142,15 +159,47 @@ public class View {
 			tileSet[6][j].add(pieces[1][j]); // White pawns in the second-last row
 		}
 	}
+		
+	public String showPromotionDialog() {
+	    // Tạo dialog phong cấp
+	    JDialog promotionDialog = new JDialog(frame, "Promotion", true);
+	    promotionDialog.setLayout(new FlowLayout());
+	    promotionDialog.setSize(300, 150);
+
+	    JLabel label = new JLabel("Chọn quân cờ để phong cấp:");
+	    label.setFont(new Font("Arial", Font.BOLD, 16));
+	    promotionDialog.add(label);
+
+	    // Các lựa chọn phong cấp
+	    String[] pieces = { "Queen", "Rook", "Bishop", "Knight" };
+	    Map<String, JButton> buttons = new HashMap<>();
+	    final String[] selectedPiece = { null };
+
+	    for (String piece : pieces) {
+	        JButton button = new JButton(piece);
+	        button.addActionListener(e -> {
+	            selectedPiece[0] = piece;
+	            promotionDialog.dispose();
+	        });
+	        buttons.put(piece, button);
+	        promotionDialog.add(button);
+	    }
+
+	    // Hiển thị dialog ở giữa màn hình
+	    promotionDialog.setLocationRelativeTo(frame);
+	    promotionDialog.setVisible(true);
+
+	    // Trả về lựa chọn của người chơi
+	    return selectedPiece[0];
+	}
+
 
 	public void recolorTiles() {
 	    Color tempColor;
-
 	    // Lặp qua 8 hàng
 	    for (int i = 0; i < 8; i++) {
 	        // Đặt lại biến color cho mỗi hàng
 	        boolean color = (i % 2 == 0); // Nếu hàng chẵn, bắt đầu với màu đầu tiên
-
 	        // Lặp qua 8 cột
 	        for (int j = 0; j < 8; j++) {
 	            tempColor = color ? Color.decode("#4f772d") : Color.decode("#90a955");
@@ -159,7 +208,6 @@ public class View {
 	        }
 	    }
 	}
-
 
 	public JFrame getFrame() {
 		return frame;
@@ -170,7 +218,6 @@ public class View {
 			return (PieceDisplay) tileSet[x][y].getComponent(0);
 		} else
 			return null;
-
 	}
 
 	public JPanel getPanelTile(int x, int y) {
@@ -222,7 +269,6 @@ public class View {
 	}
 
 	// Moves piece to said tile/location using a destination panel.
-
 	public void setPieceLocation(PieceDisplay piece, JPanel destPanel) {
 		JPanel refPanel = (JPanel) piece.getParent();
 		refPanel.remove(0);
@@ -232,14 +278,30 @@ public class View {
 		pieceDisp.setVisible(true);
 		destPanel.add(pieceDisp);
 		destPanel.repaint();
-
 	}
+	
 
 	// Sets the text at the top to determine whose turn it is and if the game has
 	// ended.
 
 	public void setTurnLabelText(String t) {
 		turnLabel.setText(t);
+	}
+	
+	public void setPieceRightPanel(boolean visible) {
+		pieceRightPanel.setVisible(visible);
+	}
+	
+	public JPanel getPieceRightPanel() {
+		return pieceRightPanel;
+	}
+	
+	public void setPieceLeftPanel(boolean visible) {
+		pieceLeftPanel.setVisible(visible);
+	}
+	
+	public JPanel getPieceLeftPanel() {
+		return pieceLeftPanel;
 	}
 
 }

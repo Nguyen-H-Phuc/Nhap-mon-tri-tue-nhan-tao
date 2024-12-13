@@ -13,6 +13,12 @@ public class Player {
 		// Sử dụng vòng lặp để tạo quân cờ
 		for (int i = 0; i < 8; i++) {
 			pieces.add(new Pawn("Pawn", color, i));
+			if(color.equals("White")) {
+				pieces.get(i).setCords(6, i);
+			}
+			if(color.equals("Black")) {
+				pieces.get(i).setCords(1, i);
+			}
 		}
 		pieces.add(new Rook("Rook", color, 8));
 		pieces.add(new Knight("Knight", color, 9));
@@ -22,7 +28,38 @@ public class Player {
 		pieces.add(new Bishop("Bishop", color, 13));
 		pieces.add(new Knight("Knight", color, 14));
 		pieces.add(new Rook("Rook", color, 15));
+		for(int i = 8;i<16;i++) {
+			if(color.equals("White")) {
+				pieces.get(i).setCords(7, i);
+			}
+			if(color.equals("Black")) {
+				pieces.get(i).setCords(0, i);
+			}
+		}
 	}
+	
+	public Player(Player other) {
+	    this.color = other.getColor();
+	    this.pieces = new ArrayList<>();
+	    for (Piece piece : other.pieces) {
+	    	if (piece instanceof Pawn) {
+	            this.pieces.add(new Pawn((Pawn) piece));
+	        } else if (piece instanceof Rook) {
+	            this.pieces.add(new Rook((Rook) piece));
+	        } else if (piece instanceof Knight) {
+	            this.pieces.add(new Knight((Knight) piece));
+	        }else if (piece instanceof Bishop) {
+	            this.pieces.add(new Bishop((Bishop) piece));
+	        }else if (piece instanceof Queen) {
+	            this.pieces.add(new Queen((Queen) piece));
+	        }else {
+	        	this.pieces.add(new King((King) piece));	        
+	        }
+	    }	
+	}
+
+
+
 	
 	public ArrayList<Piece> getPieces() {
 		return pieces;

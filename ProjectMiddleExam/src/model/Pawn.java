@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Pawn extends Piece {
-	private int value;
+
 
 	public Pawn(String name, String color, int index) {
-		super(name, color, index);
-		value = 1;
+		super(name, color, index, 100);
+	}
+
+	public Pawn(Pawn originalPiece) {
+		super(originalPiece);
 	}
 
 	@Override
@@ -19,16 +22,16 @@ public class Pawn extends Piece {
 		int currentCol = cords[1];
 		if(getAlive()==true) {
 		if (getColor().equalsIgnoreCase("Black")) { // Nước đi cho quân tốt đen
-			// Nước đi ban đầu
+			/** Kiem tra xem quan chot trang co o vi tri mac dinh khong va neu 2 o phia tren khong bi chan them cho phep tien len 2 o*/
 			if (currentRow == 1 && !board.getTile(currentRow + 2, currentCol).checkOccupied() 
 					&& !board.getTile(currentRow + 1, currentCol).checkOccupied()) {
 				listMove.add(new int[] { currentRow + 2, currentCol });
 			}
-			// Đi một ô
+			/** kiem tra o phia truoc co bi chan khong neu khong bi chan thi cho phep tien len 1 o */
 			if (currentRow + 1 < 8 && !board.getTile(currentRow + 1, currentCol).checkOccupied()) {
 				listMove.add(new int[] { currentRow + 1, currentCol });
 			}
-			// Bắt quân
+			/** kiem tra xem o cheo len ben trai va cheo len ben phai co quan quan den khong neu co thi cho phep bat quan doi thu */
 			if (currentRow + 1 < 8) {
 				if (currentCol + 1 < 8 && board.getTile(currentRow + 1, currentCol + 1).checkOccupied()
 						&& board.getTile(currentRow + 1, currentCol + 1).getPiece().getColor().equals("White")) {
@@ -40,16 +43,16 @@ public class Pawn extends Piece {
 				}
 			}
 		} else { // Nước đi cho quân tốt trắng
-			// Nước đi ban đầu
+			/** Kiem tra xem quan chot trang co o vi tri mac dinh khong va neu 2 o phia tren khong bi chan them cho phep tien len 2 o*/
 			if (currentRow == 6 && !board.getTile(currentRow - 2, currentCol).checkOccupied() 
 					&& !board.getTile(currentRow - 1, currentCol).checkOccupied()) {
 				listMove.add(new int[] { currentRow - 2, currentCol });
 			}
-			// Đi một ô
+			/** kiem tra o phia truoc co bi chan khong neu khong bi chan thi cho phep tien len 1 o */
 			if (currentRow - 1 >= 0 && !board.getTile(currentRow - 1, currentCol).checkOccupied()) {
 				listMove.add(new int[] { currentRow - 1, currentCol });
 			}
-			// Bắt quân
+			/** kiem tra xem o cheo len ben trai va cheo len ben phai co quan quan den khong neu co thi cho phep bat quan doi thu */
 			if (currentRow - 1 >= 0) {
 				if (currentCol + 1 < 8 && board.getTile(currentRow - 1, currentCol + 1).checkOccupied()
 						&& board.getTile(currentRow - 1, currentCol + 1).getPiece().getColor().equals("Black")) {
@@ -62,10 +65,6 @@ public class Pawn extends Piece {
 			}
 		}}
 		return listMove;
-	}
-
-	public int getValue() {
-		return this.value;
 	}
 
 	@Override

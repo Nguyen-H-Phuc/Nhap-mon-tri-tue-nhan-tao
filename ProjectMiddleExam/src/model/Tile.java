@@ -5,7 +5,7 @@ public class Tile {
 	private boolean occupied;
 
 	public Tile() {
-		this.occupied = false; // Khởi tạo mặc định ô chưa bị chiếm
+		this.occupied = false; // cell is unused
 	}
 
 	public boolean checkOccupied() {
@@ -14,7 +14,7 @@ public class Tile {
 
 	public void setPiece(Piece piece) {
 		this.occupant = piece;
-		this.occupied = (piece != null); // Cập nhật trạng thái bị chiếm
+		this.occupied = (piece != null); // update occupied if cell is occupied
 	}
 
 	public Piece getPiece() {

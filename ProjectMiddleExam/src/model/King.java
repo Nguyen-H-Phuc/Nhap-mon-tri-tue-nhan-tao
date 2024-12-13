@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class King extends Piece {
-	private int value;
 
 
 	public King(String name, String color, int index) {
-		super(name, color, index);
-		value = 1000000;
+		super(name, color, index,1000);
+	}
+
+	public King(King originalPiece) {
+		super(originalPiece);
 	}
 
 	@Override
@@ -46,11 +48,6 @@ public class King extends Piece {
 
 		return listMove;
 	}
-
-	public int getValue() {
-		return this.value;
-	}
-	
 
 	@Override
 	public String toString() {

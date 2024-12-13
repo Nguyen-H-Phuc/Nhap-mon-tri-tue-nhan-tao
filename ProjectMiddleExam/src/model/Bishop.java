@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bishop extends Piece {
-	private int value;
 
 	public Bishop(String name, String color, int index) {
-		super(name, color, index);
-		this.value = 3;
+		super(name, color, index, 300);
+	}
+
+	public Bishop(Bishop originalPiece) {
+		super(originalPiece);
 	}
 
 	@Override
@@ -89,9 +91,6 @@ public class Bishop extends Piece {
 		return listMove;
 	}
 
-	public int getValue() {
-		return this.value;
-	}
 
 	@Override
 	public String toString() {

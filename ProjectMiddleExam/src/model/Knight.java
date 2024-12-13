@@ -5,11 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Knight extends Piece {
-	private int value;
+
 
 	public Knight(String name, String color, int index) {
-		super(name, color, index);
-		this.value = 3;
+		super(name, color, index,300);
+	}
+
+	public Knight(Knight originalPiece) {
+		super(originalPiece);
 	}
 
 	@Override
@@ -40,10 +43,6 @@ public class Knight extends Piece {
 		}}
 
 		return listMove;
-	}
-
-	public int getValue() {
-		return this.value;
 	}
 
 	@Override

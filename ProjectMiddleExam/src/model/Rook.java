@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Rook extends Piece {
-	private int value;
 
 	public Rook(String name, String color, int index) {
-		super(name, color, index);
-		this.value = 5;
+		super(name, color, index,500);
+	}
+
+	public Rook(Rook originalPiece) {
+		super(originalPiece);
 	}
 
 	@Override
@@ -68,11 +70,6 @@ public class Rook extends Piece {
 
 		return listMove;
 	}
-
-	public int getValue() {
-		return this.value;
-	}
-
 
 	@Override
 	public String toString() {

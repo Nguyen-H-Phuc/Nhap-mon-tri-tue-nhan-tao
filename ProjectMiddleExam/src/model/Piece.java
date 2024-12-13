@@ -10,15 +10,27 @@ public abstract class Piece {
 	private boolean hasMoved;
 	private int index; // position in player's list
 	private int[] cords; // position in board, [0] is row, [1] is col
+	private int value; // The value of the piece is used to calculate the heuristic
 
-	public Piece(String name, String color, int index) {
+	public Piece(String name, String color, int index, int value) {
 		this.name = name;
 		this.color = color;
 		this.alive = true;
-		this.hasMoved = false;
 		this.index = index;
 		this.cords = new int[2];
+		this.value = value;
 	}
+	
+	public Piece(Piece other) {
+	    this.name = other.getName();
+	    this.color = other.getColor();
+	    this.alive = other.getAlive();
+	    this.hasMoved = other.isHasMoved();
+	    this.index = other.getIndex();
+	    this.cords = other.getCords() != null ? other.getCords().clone() : null;
+	    this.value = other.getValue();
+	}
+
 
 	public String getName() {
 		return this.name;
@@ -30,10 +42,6 @@ public abstract class Piece {
 
 	public boolean getAlive() {
 		return alive;
-	}
-	
-	public void setAlive() {
-		alive = true;
 	}
 
 	public void setDead() {
@@ -59,6 +67,10 @@ public abstract class Piece {
 
 	public int[] getCords() {
 		return cords;
+	}
+	
+	public int getValue() {
+		return value;
 	}
 
 	public abstract String toString();
