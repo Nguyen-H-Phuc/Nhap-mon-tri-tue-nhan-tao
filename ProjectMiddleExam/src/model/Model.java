@@ -1,9 +1,8 @@
 package model;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 import view.PieceDisplay;
 
 public class Model {
@@ -25,7 +24,7 @@ public class Model {
 			board = new Board(player2, player1);
 	}
 
-	public Piece checkPromotion() {
+	public Piece checkPromotion(Board board) {
 		for (int i = 0; i < 8; i++) {
 			// Kiểm tra hàng đầu (0) cho quân tốt đen
 			if (board.getTile(0, i).getPiece() != null && board.getTile(0, i).getPiece().getName().equals("Pawn")) {
@@ -39,7 +38,7 @@ public class Model {
 		return null;
 	}
 	
-	public void promote(Piece pawn, int choice) {
+	public void promote(Board board, Player white, Player black, Piece pawn, int choice) {
 		Piece piece = null;
 		int row = pawn.getCords()[0];
 		int col = pawn.getCords()[1];
@@ -66,9 +65,9 @@ public class Model {
 			piece.setCords(row, col);
 			board.setTile(piece, row, col);
 			if (row == 0) {
-				player1.getPieces().set(pawn.getIndex(), piece);
+				white.getPieces()[pawn.getIndex()] = piece;
 			} else {
-				player2.getPieces().set(pawn.getIndex(), piece);
+				black.getPieces()[pawn.getIndex()] = piece;
 			}
 
 		}
@@ -125,6 +124,7 @@ public class Model {
 		return true; // Không có nước đi nào thoát khỏi chiếu, đây là chiếu bí
 	}
 	
+	//nhap thanh gan
 	public boolean castlingQueenSide(Board board, Player player, Player opponent) {
 		Piece king = player.getPiece(12);
 		Piece rook = player.getPiece(8);
@@ -164,6 +164,7 @@ public class Model {
 		return true;
 	}
 	
+	// nhap thanh xa
 	public boolean castlingKingSide(Board board, Player player, Player opponent) {
 		Piece king = player.getPiece(12);
 		Piece rook = player.getPiece(8);
@@ -203,6 +204,7 @@ public class Model {
 		return true;
 	}
 	
+	// them nuoc di nhap thanh cho vua neu co, cac quan co khac di binh thuong
 	public List<int[]> listMoveLegal(Player player, Player opponent, Piece piece,Board board) {
 		List<int[]> listMove = piece.listValidMoves(board);
 		if(piece.getName().equals("King")) {
@@ -316,160 +318,109 @@ public class Model {
 		return turn;
 	}
 
+	//thuc hien nuoc di
 	public void processMove(Board board, Piece piece, int[] newCords, Player player, Player opponent) {
-		if (player.getPieces().get(piece.getIndex()).getName().equals("King") && !player.getPieces().get(piece.getIndex()).isHasMoved()) {
+		if (player.getPiece(piece.getIndex()).getName().equals("King") && !player.getPiece(piece.getIndex()).isHasMoved()) {
 			castling(board, player, opponent, newCords[1]);
 		}
 		player.movePiece(board, piece, newCords, opponent);
 	}
 	
-	public int heuristic(Board board) {
+	public int heuristic(Player white, Player black,Board board) {
 		int score = 0;
-		for(Tile[] tiles : board.getTiles()) {
-			for(Tile tile : tiles) {
-				if(tile.checkOccupied()) {
-				if(tile.getPiece().getColor().equals("White")){
-					score -= tile.getPiece().getValue();
-				}
-				if(tile.getPiece().getColor().equals("Black")) {
-					score += tile.getPiece().getValue();
-				}
+		for(int i = 0; i<16;i++) {
+			if(white.getPiece(i).getAlive()) {
+				score+=white.getPiece(i).getValue();
+				//tinh xem nguoi choi trang co bao nhieu nuoc di
+				score+=white.getPiece(i).listValidMoves(board).size();
 			}
+			if(black.getPiece(i).getAlive()) {
+				score-=black.getPiece(i).getValue();
+				//tinh xem nguoi choi den co bao nhieu nuoc di
+				score-=black.getPiece(i).listValidMoves(board).size();
 			}
 		}return score;
 	}
 	
-	
-	public int[] minimax(boolean maxmin, Board state, int depth, Player player1, Player player2) {
-	    if (depth == 0) {
-	        return new int[]{heuristic(state), -1, -1, -1, -1}; // Trả về giá trị heuristic
-	    }
-	    	
-	    int[] bestMove = new int[5];
-	    int bestValue = maxmin ? Integer.MIN_VALUE : Integer.MAX_VALUE;	   
-	    for(int i =0; i<8;i++) {
-	    	for(int j =0; j<8;j++) {
-	    		if(state.getTile(i, j).checkOccupied()) {
-
-	                Piece piece = state.getTile(i, j).getPiece();
-	                if ((maxmin && piece.getColor().equals("White")) || (!maxmin && piece.getColor().equals("Black"))) {
-	                    for (int[] move : listMoveLegal(maxmin ? player1 : player2, maxmin ? player2 : player1, piece,state)) {	                    	
-	                        Player maxCopy = new Player(maxmin ? player1 : player2);
-	                        Player minCopy = new Player(maxmin ? player2 : player1);
-	                        
-	                        Board tempState = new Board(minCopy, maxCopy, true);
-	                        
-	                        System.out.println(tempState.toString()+"Truoc khi di chuyen");
-	                        // Cập nhật trạng thái Board mới
-	                        processMove(tempState, tempState.getTile(i, j).getPiece(), move, maxCopy, minCopy);
-	                        System.out.println(tempState.toString()+"Sau khi di chuyen");
-	                        
-
-	                        // Gọi đệ quy
-	                        int[] result = minimax(!maxmin, tempState, depth - 1, maxCopy, minCopy);
-	                        int currentValue = result[0];
-	                        System.out.println(currentValue);
-
-	                        // Maximize or minimize
-	                        if ((maxmin && currentValue > bestValue) || (!maxmin && currentValue < bestValue)) {
-	                            bestValue = currentValue;
-	                            bestMove[0] = currentValue;
-	                            bestMove[1] = move[0];
-	                            bestMove[2] = move[1];
-	                            bestMove[3] = piece.getCords()[0];
-	                            bestMove[4] = piece.getCords()[1];
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	    }
-
-	    bestMove[0] = bestValue;
-	    return bestMove;
-	}
+	public int[]minimax(boolean turnWhite,Board board, int depth, Player white, Player black) {
+		if(depth == 0) {
+			return new int[] {heuristic(white, black, board),-1,-1,-1,-1};
+		}
+		int[] bestMove = new int[5];
+		int bestValue = turnWhite ? Integer.MIN_VALUE: Integer.MAX_VALUE;
+		//ben trang
+		if(turnWhite) {
+			for(int i = 0; i < 16; i++) {
+				if(white.getPiece(i).getAlive()) {
+					Piece piece = white.getPiece(i);
+					for(int[] move : listMoveLegal(white, black, white.getPiece(i), board)) {
+						Player max = new Player(white);
+						Player min = new Player(black);
+						Board newBoard = new Board(max, min);
+//						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
+						// Cap nhat trang thai board
+						if(checkPromotion(newBoard)!=null) {
+							promote(newBoard,max, min,checkPromotion(newBoard), 1);
+						}
+						processMove(newBoard, max.getPiece(i), move, max, min);
+//						System.out.println(newBoard.toString()+"sau khi di chuyen");
+						
+						int[] result = minimax(!turnWhite, newBoard, depth - 1, max, min);
+						int currentValue = result[0];
+						if(currentValue > bestValue) {
+							bestValue = currentValue;
+                            bestMove[0] = currentValue;
+                            bestMove[1] = move[0];
+                            bestMove[2] = move[1];
+                            bestMove[3] = piece.getCords()[0];
+                            bestMove[4] = piece.getCords()[1];
+						}
+					}
+				}
+			}
+		}
+		// ben den
+		if(!turnWhite) {
+			for(int i = 0; i < 16; i++) {
+				if(black.getPiece(i).getAlive()) {
+					Piece piece = black.getPiece(i);
+					for(int[] move : listMoveLegal(black, white, black.getPiece(i), board)) {
+						Player max = new Player(black);
+						Player min = new Player(white);
+						Board newBoard = new Board(min, max);
+						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
+						// Cap nhat trang thai board
+						if(checkPromotion(newBoard)!=null) {
+							promote(newBoard,max, min,checkPromotion(newBoard), 1);
+						}
+						processMove(newBoard, max.getPiece(i), move, max, min);
+						System.out.println(newBoard.toString()+"sau khi di chuyen");
+						
+						int[] result = minimax(!turnWhite, newBoard, depth - 1, min, max);
+						
+						int currentValue = result[0];
+//						System.out.println(currentValue);
+						if(currentValue < bestValue) {
+							bestValue = currentValue;
+                            bestMove[0] = currentValue;
+                            bestMove[1] = move[0];
+                            bestMove[2] = move[1];
+                            bestMove[3] = piece.getCords()[0];
+                            bestMove[4] = piece.getCords()[1];
+						}
+					}
+				}
+			}
+		}
 		
-//	test model
-	
-//	public void startGame() {
-//	Scanner scanner = new Scanner(System.in);
-//	setPlaying(true);
-//	Player currentPlayer;
-//	Player opponent;
-//
-//	while (getPlaying()) {
-//		System.out.println(getBoard()); // In ra bàn cờ hiện tại
-//		if (getTurn()) {
-//			currentPlayer = this.getPlayer1();
-//			opponent = this.getPlayer2();
-//			System.out.println("Turn: " + "White");
-//		} else {
-//			currentPlayer = this.getPlayer2();
-//			opponent = this.getPlayer1();
-//			System.out.println("Turn: " + "Black");
-//		}
-//
-//		// Chọn quân cờ
-//		System.out.print("Choose your piece (e.g., 02 to 03): ");
-//		int row = scanner.nextInt();
-//		int col = scanner.nextInt();
-//
-//		System.out.print("Choose position: ");
-//		int rowDes = scanner.nextInt();
-//		int colDes = scanner.nextInt();
-//
-//		if (board.getTile(row, col).checkOccupied()
-//				&& board.getTile(row, col).getPiece().getColor().equals(currentPlayer.getColor())) {
-//			if (processMove(getBoard(), row, col, rowDes, colDes, currentPlayer, opponent)) {
-//				currentPlayer.movePiece(board, board.getTile(row, col).getPiece(), new int[] { rowDes, colDes },
-//						opponent);
-//
-//				if (checkPromotion() != null) {
-//					System.out.println("Chọn quân để phong cấp (1: Hậu, 2: Xe, 3: Tượng, 4: Mã): ");
-//					int choice = scanner.nextInt();
-//					promote(checkPromotion(), choice);
-//				}
-//
-//				if (isCheckmate(opponent, currentPlayer)) {
-//					System.out.println("Game over!");
-//					System.out.println(currentPlayer.getColor() + " win!!!");
-//					setPlaying(!getPlaying());
-//				}
-//				setTurn(!getTurn());
-//			} else {
-//				System.out.println("Invalid move. Try again.");
-//			}
-//		} else {
-//			System.out.println("khong co quan.");
-//		}
-//
-//	}
-//	scanner.close();
-//}
+		bestMove[0] = bestValue;
+	    return bestMove; 
+	}
 
-//private boolean processMove(Board b, int row, int col, int rowDes, int colDes, Player player1, Player player2) {
-//	if (b.getTile(row, col).getPiece().getName().equals("King") && !b.getTile(row, col).getPiece().isHasMoved()) {
-//		return castling(b, player1, player2, colDes);
-//	}
-//	for (int[] des : b.getTile(row, col).getPiece().listValidMoves(b)) {
-//		if (des[0] == rowDes && des[1] == colDes) {
-//			return true;
-//		}
-//	}
-//	return false;
-//}
-
-//	public static void main(String[] args) {
-//		Model m = new Model();
-//		m.addPlayers("White");
-//		m.setTurn(true);
-//		m.startGame();
-//	}
-	
 	public static void main(String[] args) {
 		Model m = new Model();
 		m.addPlayers("White");
-		int [] bestmove = m.minimax(false, m.getBoard(),1, m.getPlayer1(),m.getPlayer2());
+		int [] bestmove = m.minimax(false, m.getBoard(), 1, m.getPlayer1(), m.getPlayer2());
 		for(int i : bestmove) {
 			System.out.println(i);
 		}

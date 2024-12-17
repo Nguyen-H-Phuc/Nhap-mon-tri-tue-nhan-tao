@@ -4,64 +4,72 @@ import java.util.ArrayList;
 
 public class Player {
 	private String color;
-	private ArrayList<Piece> pieces;
+	private Piece[] pieces;
 
 	public Player(String color) {
 		this.color = color;
-		pieces = new ArrayList<>();
-
+		pieces = new Piece[16];
 		// Sử dụng vòng lặp để tạo quân cờ
 		for (int i = 0; i < 8; i++) {
-			pieces.add(new Pawn("Pawn", color, i));
-			if(color.equals("White")) {
-				pieces.get(i).setCords(6, i);
+			pieces[i] =new Pawn("Pawn", color, i);
+			if (color.equals("White")) {
+				pieces[i].setCords(6, i);
 			}
-			if(color.equals("Black")) {
-				pieces.get(i).setCords(1, i);
+			if (color.equals("Black")) {
+				pieces[i].setCords(1, i);
 			}
 		}
-		pieces.add(new Rook("Rook", color, 8));
-		pieces.add(new Knight("Knight", color, 9));
-		pieces.add(new Bishop("Bishop", color, 10));
-		pieces.add(new Queen("Queen", color, 11));
-		pieces.add(new King("King", color, 12));
-		pieces.add(new Bishop("Bishop", color, 13));
-		pieces.add(new Knight("Knight", color, 14));
-		pieces.add(new Rook("Rook", color, 15));
-		for(int i = 8;i<16;i++) {
-			if(color.equals("White")) {
-				pieces.get(i).setCords(7, i);
-			}
-			if(color.equals("Black")) {
-				pieces.get(i).setCords(0, i);
-			}
+		pieces[8] = new Rook("Rook", color, 8);
+		pieces[9] = new Knight("Knight", color, 9);
+		pieces[10] = new Bishop("Bishop", color, 10);
+		pieces[11] = new Queen("Queen", color, 11);
+		pieces[12] = new King("King", color, 12);
+		pieces[13] = new Bishop("Bishop", color, 13);
+		pieces[14] = new Knight("Knight", color, 14);
+		pieces[15] = new Rook("Rook", color, 15);
+		if(this.color.equals("White")) {
+			pieces[8].setCords(7, 0);
+			pieces[9].setCords(7, 1);
+			pieces[10].setCords(7, 2);
+			pieces[11].setCords(7, 3);
+			pieces[12].setCords(7, 4);
+			pieces[13].setCords(7, 5);
+			pieces[14].setCords(7, 6);
+			pieces[15].setCords(7, 7);
+		}else {
+			pieces[8].setCords(0, 0);
+			pieces[9].setCords(0, 1);
+			pieces[10].setCords(0, 2);
+			pieces[11].setCords(0, 3);
+			pieces[12].setCords(0, 4);
+			pieces[13].setCords(0, 5);
+			pieces[14].setCords(0, 6);
+			pieces[15].setCords(0, 7);
 		}
 	}
 	
 	public Player(Player other) {
 	    this.color = other.getColor();
-	    this.pieces = new ArrayList<>();
-	    for (Piece piece : other.pieces) {
+	    this.pieces = new Piece[16];
+	    for (int i = 0; i < 16; i++) {
+	    	Piece piece = other.getPiece(i);
 	    	if (piece instanceof Pawn) {
-	            this.pieces.add(new Pawn((Pawn) piece));
+	            this.pieces[i] = new Pawn((Pawn) piece);
 	        } else if (piece instanceof Rook) {
-	            this.pieces.add(new Rook((Rook) piece));
+	        	this.pieces[i] = new Rook((Rook) piece);
 	        } else if (piece instanceof Knight) {
-	            this.pieces.add(new Knight((Knight) piece));
+	        	this.pieces[i] = new Knight((Knight) piece);
 	        }else if (piece instanceof Bishop) {
-	            this.pieces.add(new Bishop((Bishop) piece));
+	        	this.pieces[i] = new Bishop((Bishop) piece);
 	        }else if (piece instanceof Queen) {
-	            this.pieces.add(new Queen((Queen) piece));
+	        	this.pieces[i] = new Queen((Queen) piece);
 	        }else {
-	        	this.pieces.add(new King((King) piece));	        
+	        	this.pieces[i] = new King((King) piece);	        
 	        }
 	    }	
 	}
-
-
-
 	
-	public ArrayList<Piece> getPieces() {
+	public Piece[] getPieces() {
 		return pieces;
 	}
 
@@ -70,15 +78,15 @@ public class Player {
 	}
 
 	public Piece getPiece(int index) {
-		return pieces.get(index);
+		return pieces[index];
 	}
 
 	public void togglePiece(int index) {
-		pieces.get(index).setDead();
+		pieces[index].setDead();
 	}
 
 	public boolean checkWin(Player opponent) {
-		return !opponent.getPiece(12).getAlive(); // Có thể viết ngắn gọn hơn
+		return !opponent.getPiece(12).getAlive();
 	}
 
 	public void movePiece(Board board, Piece piece, int[] newCords, Player opponent) {
@@ -91,8 +99,8 @@ public class Player {
 		// Changes the Piece inside the destination Tile
 		board.setTile(piece, newCords[0], newCords[1]);
 		// Updates the New Cords of the Moved Piece
-		pieces.get(piece.getIndex()).setCords(newCords[0], newCords[1]);
-		pieces.get(piece.getIndex()).setHasMoved(true);
+		pieces[piece.getIndex()].setCords(newCords[0], newCords[1]);
+		pieces[piece.getIndex()].setHasMoved(true);
 	}
 
 	@Override

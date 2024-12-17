@@ -3,7 +3,6 @@ package controller;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
@@ -65,10 +64,10 @@ public class Controller {
 									v.recolorTiles();
 									m.setCurP(null);
 								}
-							} else if (((JPanel) ((PieceDisplay) e.getSource()).getParent())
-									.getBackground() == Color.GREEN && m.getCurP() != null && m.getTurn()
+							} else if (((JPanel) ((PieceDisplay) e.getSource()).getParent()).getBackground() == Color.GREEN 
+									&& m.getCurP() != null && m.getTurn()
 									&& ((e.getSource() != m.getCurP())
-											&& (((PieceDisplay) e.getSource()).getColor()).equals(p2.getColor()))) {
+									&& (((PieceDisplay) e.getSource()).getColor()).equals(p2.getColor()))) {
 								v.recolorTiles();
 								Object o = e.getComponent().getParent();
 								int[] newCords = getCoordinates(o);
@@ -81,16 +80,17 @@ public class Controller {
 
 								((PieceDisplay) e.getSource()).getParent().remove(0);
 								v.setPieceLocation(m.getCurP(), v.getPanelTile(destY, destX));
-
-								if (p1.getPiece((m.getCurP().getIndex())).getName().equals("Pawn")
-										&& newCords[0] == 0) {
-								promote(m.getCurP(), v, m);
+								
+								//phong cap
+								if (p1.getPiece((m.getCurP().getIndex())).getName().equals("Pawn") && newCords[0] == 0) {
+									promote(m.getCurP(), v, m);
 								}
 								
 								endTurn();
 								m.setCurP(null);
 								endGame(m.getPlaying());
 							} 
+
 							else if (!m.getTurn() && p2.getColor().equals(((PieceDisplay) e.getSource()).getColor())) {
 								if (m.getCurP() == null) {
 									// Select the piece
@@ -105,10 +105,10 @@ public class Controller {
 									v.recolorTiles();
 									m.setCurP(null);
 								}
-							} else if (((JPanel) ((PieceDisplay) e.getSource()).getParent())
-									.getBackground() == Color.GREEN && m.getCurP() != null && !m.getTurn()
+							} else if (((JPanel) ((PieceDisplay) e.getSource()).getParent()).getBackground() == Color.GREEN 
+									&& m.getCurP() != null && !m.getTurn()
 									&& ((e.getSource() != m.getCurP())
-											&& (((PieceDisplay) e.getSource()).getColor()).equals(p1.getColor()))) {
+									&& (((PieceDisplay) e.getSource()).getColor()).equals(p1.getColor()))) {
 								v.recolorTiles();
 								Object o = e.getComponent().getParent();
 								int[] newCords = getCoordinates(o);
@@ -160,6 +160,7 @@ public class Controller {
 				getView().getPanelTile(i, j).addMouseListener(new MouseListener() {
 
 					Model m;
+					View view;
 					Player p1;
 					Player p2;
 
@@ -168,6 +169,7 @@ public class Controller {
 						m = getModel();
 						p1 = m.getPlayer1();
 						p2 = m.getPlayer2();
+						view = getView();
 
 						if (m.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
 							if (m.getCurP() != null) {
@@ -207,7 +209,8 @@ public class Controller {
 									endGame(m.getPlaying());
 								}
 							}
-						} else if (!m.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
+					} 
+							else if (!m.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
 							if (m.getCurP() != null) {
 								if (e.getSource() == m.getCurP().getParent()) {
 									m.setCurP(null);
@@ -282,22 +285,22 @@ public class Controller {
 		switch (piece) {
 		case "Queen": {
 			currP.setNameAndUpdateIcon("Queen");
-			m.promote(getModel().checkPromotion(), 1);
+			m.promote(m.getBoard(),m.getPlayer1(), m.getPlayer2(),m.checkPromotion(m.getBoard()), 1);
 			break;
 		}
 		case "Rook": {
 			currP.setNameAndUpdateIcon("Rook");
-			m.promote(getModel().checkPromotion(), 2);
+			m.promote(m.getBoard(),m.getPlayer1(), m.getPlayer2(),getModel().checkPromotion(m.getBoard()), 2);
 			break;
 		}
 		case "Bishop": {
 			currP.setNameAndUpdateIcon("Bishop");
-			m.promote(getModel().checkPromotion(), 3);
+			m.promote(m.getBoard(),m.getPlayer1(), m.getPlayer2(),getModel().checkPromotion(m.getBoard()), 3);
 			break;
 		}
 		case "Knight": {
 			currP.setNameAndUpdateIcon("Knight");
-			m.promote(getModel().checkPromotion(), 4);
+			m.promote(m.getBoard(),m.getPlayer1(), m.getPlayer2(),getModel().checkPromotion(m.getBoard()), 4);
 			break;
 		}
 		}
@@ -319,12 +322,13 @@ public class Controller {
 	public void endGame(boolean bWin) {
 	    Model m = getModel();
 
-	    if (!bWin) {
-	        // Kiểm tra thắng bằng chiếu bí hoặc loại vua
-	        if (m.getPlayer1().checkWin(m.getPlayer2()) || m.isCheckmate(m.getPlayer2(), m.getPlayer1())) {
-	            getView().setTurnLabelText("Player 1 wins!");
-	            removeListeners(); // Kết thúc trò chơi
-	        }} 
+		if (!bWin) {
+			// Kiểm tra thắng bằng chiếu bí hoặc loại vua
+			if (m.getPlayer1().checkWin(m.getPlayer2()) || m.isCheckmate(m.getPlayer2(), m.getPlayer1())) {
+				getView().setTurnLabelText("Player 1 wins!");
+				removeListeners(); // Kết thúc trò chơi
+			}
+		} 
 	    else {
 	        if (m.getPlayer2().checkWin(m.getPlayer1()) || m.isCheckmate(m.getPlayer1(), m.getPlayer2())) {
 	            getView().setTurnLabelText("Player 2 wins!");
