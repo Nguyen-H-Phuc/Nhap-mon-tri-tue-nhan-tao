@@ -70,7 +70,7 @@ public class Player {
 	public Piece[] getPieces() {
 		return pieces;
 	}
-
+	
 	public String getColor() {
 		return color;
 	}
@@ -78,7 +78,8 @@ public class Player {
 	public Piece getPiece(int index) {
 		return pieces[index];
 	}
-
+	
+	// 
 	public void togglePiece(int index) {
 		pieces[index].setDead();
 	}

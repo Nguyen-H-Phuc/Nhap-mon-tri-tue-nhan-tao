@@ -1,11 +1,9 @@
 package model;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class King extends Piece {
-
 
 	public King(String name, String color, int index) {
 		super(name, color, index,1000);

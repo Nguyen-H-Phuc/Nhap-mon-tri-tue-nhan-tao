@@ -23,7 +23,7 @@ public class Board {
 	public Tile[][] getTiles() {
 		return tiles; // Trả về mảng 2 chiều
 	}
-
+	
 	public void setTile(Piece piece, int row, int col) {
 		tiles[row][col].setPiece(piece);
 	}

@@ -5,7 +5,6 @@ import java.util.List;
 
 public class Knight extends Piece {
 
-
 	public Knight(String name, String color, int index) {
 		super(name, color, index,300);
 	}

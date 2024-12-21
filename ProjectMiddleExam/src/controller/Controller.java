@@ -22,12 +22,11 @@ public class Controller {
 	}
 
 	private void initializeTeams() {
-		getModel().setPlaying(true);
-		initializeTiles();
-		getModel().setCurP(null);
 		getModel().addPlayers("White");
+		getModel().setPlaying(true);
 		getModel().setTurn(true);
 		initializeListeners();
+		initializeTiles();
 	}
 
 	public void initializeListeners() {
@@ -49,7 +48,6 @@ public class Controller {
 							p1 = model.getPlayer1();
 							p2 = model.getPlayer2();
 							
-
 							if (m.getTurn() && p1.getColor().equals(((PieceDisplay) e.getSource()).getColor())) {
 								if (m.getCurP() == null) {
 									m.setCurP((PieceDisplay) e.getSource());
@@ -73,7 +71,7 @@ public class Controller {
 								int[] newCords = getCoordinates(o);
 
 								p1.movePiece(m.getBoard(), p1.getPiece(m.getCurP().getIndex()), newCords, p2);
-								m.setPlaying(!p1.checkWin(p2) || m.isCheckmate(p1, p2));
+								m.setPlaying(!p1.checkWin(p2) || m.isCheckmate(p1, p2, m.getBoard()));
 
 								int destX = v.getTileCoordX((JPanel) ((PieceDisplay) e.getSource()).getParent());
 								int destY = v.getTileCoordY((JPanel) ((PieceDisplay) e.getSource()).getParent());
@@ -89,48 +87,65 @@ public class Controller {
 								endTurn();
 								m.setCurP(null);
 								endGame(m.getPlaying());
-							} 
-
-							else if (!m.getTurn() && p2.getColor().equals(((PieceDisplay) e.getSource()).getColor())) {
-								if (m.getCurP() == null) {
-									// Select the piece
-									m.setCurP((PieceDisplay) e.getSource());
-									// Highlight valid moves in green
-									for (int[] validMove : m.listMoveLegal(p2, p1,
-											p2.getPiece(m.getCurP().getIndex()),m.getBoard())) {
-										v.getPanelTile(validMove[0], validMove[1]).setBackground(Color.GREEN);
-									}
-								} else if (e.getSource() == m.getCurP()) {
-									// Deselect if clicked again
-									v.recolorTiles();
-									m.setCurP(null);
+								int [] move = m.minimax(false, m.getBoard(), 1, p1, p2);
+								for(int i : move) {
+									System.out.println(i);
 								}
-							} else if (((JPanel) ((PieceDisplay) e.getSource()).getParent()).getBackground() == Color.GREEN 
-									&& m.getCurP() != null && !m.getTurn()
-									&& ((e.getSource() != m.getCurP())
-									&& (((PieceDisplay) e.getSource()).getColor()).equals(p1.getColor()))) {
-								v.recolorTiles();
-								Object o = e.getComponent().getParent();
-								int[] newCords = getCoordinates(o);
-
-								p2.movePiece(m.getBoard(), p2.getPiece(m.getCurP().getIndex()), newCords, p1);
-								m.setPlaying(!p2.checkWin(p1) || m.isCheckmate(p2, p1));
-
-								int destX = v.getTileCoordX((JPanel) ((PieceDisplay) e.getSource()).getParent());
-								int destY = v.getTileCoordY((JPanel) ((PieceDisplay) e.getSource()).getParent());
-
-								((PieceDisplay) e.getSource()).getParent().remove(0);
-								v.setPieceLocation(m.getCurP(), v.getPanelTile(destY, destX));
-								
-								if (p2.getPiece((m.getCurP().getIndex())).getName().equals("Pawn")
-										&& newCords[0] == 7) {
-								promote(m.getCurP(), v, m);
+								m.setCurP(view.getPiece(move[3], move[4]));
+								int []move1 = {move[1],move[2]};
+								if(view.getPanelTile(move[1], move[2]).getComponentCount()>0) {
+									view.getPanelTile(move[1], move[2]).remove(0);
 								}
-
+								p2.movePiece(m.getBoard(), m.getBoard().getTile(move[3], move [4]).getPiece(), move1, p1);
+								view.setPieceLocation(m.getCurP(), view.getPanelTile(move[1],move[2]));
+								System.out.println(m.getBoard().toString());
+								System.out.println(true);
 								endTurn();
 								m.setCurP(null);
 								endGame(m.getPlaying());
-							}
+
+							} 
+
+//							else if (!m.getTurn() && p2.getColor().equals(((PieceDisplay) e.getSource()).getColor())) {
+//								if (m.getCurP() == null) {
+//									// Select the piece
+//									m.setCurP((PieceDisplay) e.getSource());
+//									// Highlight valid moves in green
+//									for (int[] validMove : m.listMoveLegal(p2, p1,
+//											p2.getPiece(m.getCurP().getIndex()),m.getBoard())) {
+//										v.getPanelTile(validMove[0], validMove[1]).setBackground(Color.GREEN);
+//									}
+//								} else if (e.getSource() == m.getCurP()) {
+//									// Deselect if clicked again
+//									v.recolorTiles();
+//									m.setCurP(null);
+//								}
+//							} else if (((JPanel) ((PieceDisplay) e.getSource()).getParent()).getBackground() == Color.GREEN 
+//									&& m.getCurP() != null && !m.getTurn()
+//									&& ((e.getSource() != m.getCurP())
+//									&& (((PieceDisplay) e.getSource()).getColor()).equals(p1.getColor()))) {
+//								v.recolorTiles();
+//								Object o = e.getComponent().getParent();
+//								int[] newCords = getCoordinates(o);
+//
+//								p2.movePiece(m.getBoard(), p2.getPiece(m.getCurP().getIndex()), newCords, p1);
+//								m.setPlaying(!p2.checkWin(p1) || m.isCheckmate(p2, p1, m.getBoard()));
+//
+//								int destX = v.getTileCoordX((JPanel) ((PieceDisplay) e.getSource()).getParent());
+//								int destY = v.getTileCoordY((JPanel) ((PieceDisplay) e.getSource()).getParent());
+//
+//								((PieceDisplay) e.getSource()).getParent().remove(0);
+//								v.setPieceLocation(m.getCurP(), v.getPanelTile(destY, destX));
+//								
+//								if (p2.getPiece((m.getCurP().getIndex())).getName().equals("Pawn")
+//										&& newCords[0] == 7) {
+//								promote(m.getCurP(), v, m);
+//								}
+//
+//								endTurn();
+//								m.setCurP(null);
+//								endGame(m.getPlaying());
+//							}
 						}
 
 						@Override
@@ -160,7 +175,7 @@ public class Controller {
 				getView().getPanelTile(i, j).addMouseListener(new MouseListener() {
 
 					Model m;
-					View view;
+					View v;
 					Player p1;
 					Player p2;
 
@@ -169,7 +184,7 @@ public class Controller {
 						m = getModel();
 						p1 = m.getPlayer1();
 						p2 = m.getPlayer2();
-						view = getView();
+						v = getView();
 
 						if (m.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
 							if (m.getCurP() != null) {
@@ -180,10 +195,10 @@ public class Controller {
 								else if (((JPanel) e.getSource()).getComponentCount() != 0) {
 									m.setCurP(null);
 								} else {
-									view.recolorTiles();
+									v.recolorTiles();
 									// Moves piece to said tile
 
-									view.setPieceLocation(m.getCurP(), (JPanel) e.getSource());
+									v.setPieceLocation(m.getCurP(), (JPanel) e.getSource());
 
 									// Gets coordinates of tile
 									Object o = e.getSource();
@@ -193,61 +208,80 @@ public class Controller {
 //									p1.movePiece(m.getBoard(), p1.getPiece(m.getCurP().getIndex()), newCords, p2);
 									if (p1.getPiece(m.getCurP().getIndex()).getName().equals("King") && newCords[1] == 6
 											&& p1.getPiece(m.getCurP().getIndex()).getCords()[1] == 4) {
-										view.setPieceLocation(view.getPiece(7, 7), view.getPanelTile(7, 5));
+										v.setPieceLocation(v.getPiece(7, 7), v.getPanelTile(7, 5));
 									}
 
 									if (p1.getPiece(m.getCurP().getIndex()).getName().equals("King") && newCords[1] == 2
 											&& p1.getPiece(m.getCurP().getIndex()).getCords()[1] == 4) {
-										view.setPieceLocation(view.getPiece(7, 0), view.getPanelTile(7, 3));
+										v.setPieceLocation(v.getPiece(7, 0), v.getPanelTile(7, 3));
 									}
+																		
 									m.processMove(m.getBoard(), p1.getPiece(m.getCurP().getIndex()), newCords, p1, p2);
 									m.setPlaying(!p1.checkWin(p2));
-
+									if (p1.getPiece((m.getCurP().getIndex())).getName().equals("Pawn") && newCords[0] == 0) {
+										promote(m.getCurP(), v, m);
+									}
 									endTurn();
 									m.setCurP(null);
-
+									endGame(m.getPlaying());
+									// turn ai
+									int [] move = m.minimax(false, m.getBoard(), 1, p1, p2);
+									for(int i : move) {
+										System.out.println(i);
+									}
+									m.setCurP(v.getPiece(move[3], move[4]));
+									int []move1 = {move[1],move[2]};
+									if(v.getPanelTile(move[1], move[2]).getComponentCount()>0) {
+										v.getPanelTile(move[1], move[2]).remove(0);
+									}
+									p2.movePiece(m.getBoard(), m.getBoard().getTile(move[3], move [4]).getPiece(), move1, p1);
+									v.setPieceLocation(m.getCurP(), v.getPanelTile(move[1],move[2]));
+									System.out.println(m.getBoard().toString());
+									System.out.println(true);
+									endTurn();
+									m.setCurP(null);
 									endGame(m.getPlaying());
 								}
 							}
-					} 
-							else if (!m.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
-							if (m.getCurP() != null) {
-								if (e.getSource() == m.getCurP().getParent()) {
-									m.setCurP(null);
-								}
-
-								else if (((JPanel) e.getSource()).getComponentCount() != 0) {
-									m.setCurP(null);
-								} else {
-									view.recolorTiles();
-									// Moves piece to said tile
-									view.setPieceLocation(m.getCurP(), (JPanel) e.getSource());
-
-									// Gets coordinates of tile
-									Object o = e.getSource();
-									int[] newCords = getCoordinates(o);
-
-//									p2.movePiece(m.getBoard(), p2.getPiece(m.getCurP().getIndex()), newCords, p1);
-									if (p2.getPiece(m.getCurP().getIndex()).getName().equals("King") && newCords[1] == 6
-											&& p2.getPiece(m.getCurP().getIndex()).getCords()[1] == 4) {
-										view.setPieceLocation(view.getPiece(0, 7), view.getPanelTile(0, 5));
-									}
-									if (p2.getPiece(m.getCurP().getIndex()).getName().equals("King") && newCords[1] == 2
-											&& p2.getPiece(m.getCurP().getIndex()).getCords()[1] == 4) {
-										view.setPieceLocation(view.getPiece(0, 0), view.getPanelTile(0, 3));
-									}
-									m.processMove(m.getBoard(), p2.getPiece(m.getCurP().getIndex()), newCords, p2, p1);
-
-									m.setPlaying(!p2.checkWin(p1));
-
-									endTurn();
-									m.setCurP(null);
-
-									endGame(m.getPlaying());
-								}
-							}
-						}
-
+						} 
+//							else if (!m.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
+//							if (m.getCurP() != null) {
+//								if (e.getSource() == m.getCurP().getParent()) {
+//									m.setCurP(null);
+//								}
+//
+//								else if (((JPanel) e.getSource()).getComponentCount() != 0) {
+//									m.setCurP(null);
+//								} else {
+//									view.recolorTiles();
+//									// Moves piece to said tile
+//									view.setPieceLocation(m.getCurP(), (JPanel) e.getSource());
+//
+//									// Gets coordinates of tile
+//									Object o = e.getSource();
+//									int[] newCords = getCoordinates(o);
+//
+////									p2.movePiece(m.getBoard(), p2.getPiece(m.getCurP().getIndex()), newCords, p1);
+//									if (p2.getPiece(m.getCurP().getIndex()).getName().equals("King") && newCords[1] == 6
+//											&& p2.getPiece(m.getCurP().getIndex()).getCords()[1] == 4) {
+//										view.setPieceLocation(view.getPiece(0, 7), view.getPanelTile(0, 5));
+//									}
+//									if (p2.getPiece(m.getCurP().getIndex()).getName().equals("King") && newCords[1] == 2
+//											&& p2.getPiece(m.getCurP().getIndex()).getCords()[1] == 4) {
+//										view.setPieceLocation(view.getPiece(0, 0), view.getPanelTile(0, 3));
+//									}
+//									m.processMove(m.getBoard(), p2.getPiece(m.getCurP().getIndex()), newCords, p2, p1);
+//
+//									m.setPlaying(!p2.checkWin(p1));
+//
+//									endTurn();
+//									m.setCurP(null);
+//
+//									endGame(m.getPlaying());
+//								}
+//							}
+//						}
+//
 					}
 
 					@Override
@@ -280,34 +314,34 @@ public class Controller {
 		}
 	}
 	
+	// phong cap
 	public void promote(PieceDisplay currP, View v, Model m) {
 		String piece = v.showPromotionDialog();
 		switch (piece) {
 		case "Queen": {
 			currP.setNameAndUpdateIcon("Queen");
-			m.promote(m.getBoard(),m.getPlayer1(), m.getPlayer2(),m.checkPromotion(m.getBoard()), 1);
+			m.promote(m.getBoard(), m.getPlayer1(), m.getPlayer2(), m.checkPromotion(m.getBoard()), 1);
 			break;
 		}
 		case "Rook": {
 			currP.setNameAndUpdateIcon("Rook");
-			m.promote(m.getBoard(),m.getPlayer1(), m.getPlayer2(),getModel().checkPromotion(m.getBoard()), 2);
+			m.promote(m.getBoard(), m.getPlayer1(), m.getPlayer2(), getModel().checkPromotion(m.getBoard()), 2);
 			break;
 		}
 		case "Bishop": {
 			currP.setNameAndUpdateIcon("Bishop");
-			m.promote(m.getBoard(),m.getPlayer1(), m.getPlayer2(),getModel().checkPromotion(m.getBoard()), 3);
+			m.promote(m.getBoard(), m.getPlayer1(), m.getPlayer2(), getModel().checkPromotion(m.getBoard()), 3);
 			break;
 		}
 		case "Knight": {
 			currP.setNameAndUpdateIcon("Knight");
-			m.promote(m.getBoard(),m.getPlayer1(), m.getPlayer2(),getModel().checkPromotion(m.getBoard()), 4);
+			m.promote(m.getBoard(), m.getPlayer1(), m.getPlayer2(), getModel().checkPromotion(m.getBoard()), 4);
 			break;
 		}
 		}
 	}
 
-
-	
+	// loai bo su kien chuot de nguoi choi khong the di chuyen quan co khi tro choi ket thuc
 	public void removeListeners() {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -324,13 +358,13 @@ public class Controller {
 
 		if (!bWin) {
 			// Kiểm tra thắng bằng chiếu bí hoặc loại vua
-			if (m.getPlayer1().checkWin(m.getPlayer2()) || m.isCheckmate(m.getPlayer2(), m.getPlayer1())) {
+			if (m.getPlayer1().checkWin(m.getPlayer2()) || m.isCheckmate(m.getPlayer2(), m.getPlayer1(), m.getBoard())) {
 				getView().setTurnLabelText("Player 1 wins!");
 				removeListeners(); // Kết thúc trò chơi
 			}
 		} 
 	    else {
-	        if (m.getPlayer2().checkWin(m.getPlayer1()) || m.isCheckmate(m.getPlayer1(), m.getPlayer2())) {
+	        if (m.getPlayer2().checkWin(m.getPlayer1()) || m.isCheckmate(m.getPlayer1(), m.getPlayer2(), m.getBoard())) {
 	            getView().setTurnLabelText("Player 2 wins!");
 	            removeListeners(); // Kết thúc trò chơi
 	            return;
@@ -340,7 +374,7 @@ public class Controller {
 
 
 	public void endTurn() {
-			model.setTurn(!model.getTurn());
+		model.setTurn(!model.getTurn());
 	}
 
 	public int[] getCoordinates(Object o) {
