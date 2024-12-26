@@ -18,10 +18,9 @@ public class Model {
 	private Board board;
 	private PieceDisplay currentP;
 
-	public void addPlayers(String isWhite) {
-		player1 = new Player(isWhite);
-		String d = (isWhite.equals("White")) ? "Black" : "White";
-		player2 = new Player(d);
+	public void addPlayers() {
+		player1 = new Player("White");
+		player2 = new Player("Black");
 		board = new Board(player1, player2);
 	}
 	
@@ -145,7 +144,7 @@ public class Model {
 		}
 		// check 
 		int[] originalCords = king.getCords().clone();
-		for (int col = kingCol; col != 2; col --) {
+		for (int col = kingCol; col != 1; col--) {
 			// Di chuyển vua tạm thời
 			king.setCords(row, col);
 
@@ -179,7 +178,7 @@ public class Model {
 		}
 		// check 
 		int[] originalCords = king.getCords().clone();
-		for (int col = kingCol; col != 6; col++) {
+		for (int col = kingCol; col != 7; col++) {
 			// Di chuyển vua tạm thời
 			king.setCords(row, col);
 
@@ -284,18 +283,17 @@ public class Model {
 			for(int i = 0; i < 16; i++) {
 				if(white.getPiece(i).getAlive()) {
 					Piece piece = white.getPiece(i);
-//					for(int[] move : listMoveLegal(white, black, white.getPiece(i), board)) {
-					for(int[] move : piece.listValidMoves(board)) {
+					for(int[] move : listMoveLegal(white, black, white.getPiece(i), board)) {
 						Player max = new Player(white);
 						Player min = new Player(black);
 						Board newBoard = new Board(max, min);
-//						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
+						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
 						// Cap nhat trang thai board						
 						handleMove(newBoard, max.getPiece(i), move, max, min);
 						if(checkPromotion(newBoard)!=null) {
 							promote(newBoard,max, min,checkPromotion(newBoard), 1);
 						}
-//						System.out.println(newBoard.toString()+"sau khi di chuyen");
+						System.out.println(newBoard.toString()+"sau khi di chuyen");
 						
 						int[] result = minimax(!turnWhite, newBoard, depth - 1, max, min);
 						int currentValue = result[0];
@@ -321,13 +319,13 @@ public class Model {
 						Player min = new Player(black);
 						Board newBoard = new Board(min, max);
 
-//						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
+						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
 						// Cap nhat trang thai board
 						handleMove(newBoard, min.getPiece(i), move, min, max);
 						if(checkPromotion(newBoard)!=null) {
 							promote(newBoard,max, min,checkPromotion(newBoard), 1);
 						}
-//						System.out.println(newBoard.toString()+"sau khi di chuyen");
+						System.out.println(newBoard.toString()+"sau khi di chuyen");
 						
 						int[] result = minimax(!turnWhite, newBoard, depth - 1, max, min);
 						
@@ -489,7 +487,7 @@ public class Model {
 	
 	public static void main(String[] args) {
 	    Model m = new Model();
-	    m.addPlayers("White");
+	    m.addPlayers();
 	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(3), new int[]{4, 3}, m.getPlayer1(), m.getPlayer2());
 	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(4), new int[]{3, 4}, m.getPlayer2(), m.getPlayer1());
 	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(3), new int[]{3, 4}, m.getPlayer1(), m.getPlayer2());
@@ -507,7 +505,7 @@ public class Model {
 //	    System.out.println(m.getBoard());
 	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(11), new int[] {2, 4}, m.getPlayer1(), m.getPlayer2());
 	    m.minimax(false, m.getBoard(), 1, m.getPlayer1(), m.getPlayer2());
-//	    System.out.println(m.getBoard());
+	    System.out.println(m.getBoard());
 
 //	    for(int [] move : m.listMoveLegal(m.getPlayer2(), m.getPlayer1(), m.getPlayer2().getPiece(15), m.getBoard())) {
 //	    	System.out.println(move[0]);

@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import model.Model;
 import model.Player;
@@ -25,7 +24,7 @@ public class Controller {
 	}
 
 	private void initializeTeams() {
-		model.addPlayers("White");
+		model.addPlayers();
 		model.setPlaying(true);
 		model.setTurn(true);
 		initializeListeners();
