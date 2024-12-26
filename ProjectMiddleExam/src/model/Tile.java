@@ -1,5 +1,7 @@
 package model;
 
+import piece.Piece;
+
 public class Tile {
 	private Piece occupant;
 	private boolean occupied;

@@ -1,5 +1,13 @@
 package model;
 
+import piece.Bishop;
+import piece.King;
+import piece.Knight;
+import piece.Pawn;
+import piece.Piece;
+import piece.Queen;
+import piece.Rook;
+
 public class Player {
 	private String color;
 	private Piece[] pieces;

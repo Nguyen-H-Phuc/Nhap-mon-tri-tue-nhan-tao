@@ -1,10 +1,11 @@
-package model;
+package piece;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Queen extends Piece {
+import model.Board;
 
+public class Queen extends Piece {
 
 	public Queen(String name, String color, int index) {
 		super(name, color, index, 900);
@@ -57,7 +58,6 @@ public class Queen extends Piece {
 
 		return listMove;
 	}
-
 
 	@Override
 	public String toString() {

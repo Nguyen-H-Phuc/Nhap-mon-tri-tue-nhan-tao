@@ -1,7 +1,9 @@
-package model;
+package piece;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import model.Board;
 
 public class Bishop extends Piece {
 
@@ -44,15 +46,15 @@ public class Bishop extends Piece {
 
 			if (newRow < 0 || newCol < 0) {
 				break; // Dừng lại nếu ra ngoài bàn cờ
-			}
+				}
 			if (board.getTiles()[newRow][newCol].checkOccupied()) {
 				if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
 					listMove.add(new int[] { newRow, newCol }); // Bắt quân
-				}
+					}
 				break; // Dừng lại khi gặp quân cờ
-			}
+				}
 			listMove.add(new int[] { newRow, newCol });
-		}
+			}
 
 		// Đi chéo xuống bên phải
 		for (int i = 1; i < 8; i++) {
@@ -61,15 +63,15 @@ public class Bishop extends Piece {
 
 			if (newRow > 7 || newCol > 7) {
 				break; // Dừng lại nếu ra ngoài bàn cờ
-			}
+				}
 			if (board.getTiles()[newRow][newCol].checkOccupied()) {
 				if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
 					listMove.add(new int[] { newRow, newCol }); // Bắt quân
-				}
+					}
 				break; // Dừng lại khi gặp quân cờ
-			}
+				}
 			listMove.add(new int[] { newRow, newCol });
-		}
+			}
 
 		// Đi chéo xuống bên trái
 		for (int i = 1; i < 8; i++) {
@@ -78,16 +80,17 @@ public class Bishop extends Piece {
 
 			if (newRow > 7 || newCol < 0) {
 				break; // Dừng lại nếu ra ngoài bàn cờ
-			}
+				}
+			
 			if (board.getTiles()[newRow][newCol].checkOccupied()) {
 				if (!board.getTiles()[newRow][newCol].getPiece().getColor().equals(this.getColor())) {
 					listMove.add(new int[] { newRow, newCol }); // Bắt quân
-				}
+					}
 				break; // Dừng lại khi gặp quân cờ
-			}
+				}
 			listMove.add(new int[] { newRow, newCol });
-		}}
-
+			}
+		}
 		return listMove;
 	}
 

@@ -2,35 +2,35 @@ package model;
 
 import java.util.Arrays;
 import java.util.List;
+
+import piece.Bishop;
+import piece.Knight;
+import piece.Piece;
+import piece.Queen;
+import piece.Rook;
 import view.PieceDisplay;
 
 public class Model {
-	private PieceDisplay currentP;
+	private boolean turn;
+	private boolean isPlaying;
 	private Player player1;
 	private Player player2;
-	private boolean turn;
 	private Board board;
-	private boolean isPlaying;
+	private PieceDisplay currentP;
 
-	public void addPlayers(String c) {
-		player1 = new Player(c);
-		String d = (c.equals("White")) ? "Black" : "White";
+	public void addPlayers(String isWhite) {
+		player1 = new Player(isWhite);
+		String d = (isWhite.equals("White")) ? "Black" : "White";
 		player2 = new Player(d);
-		if (c.equals("White"))
-			board = new Board(player1, player2);
-		else
-			board = new Board(player2, player1);
+		board = new Board(player1, player2);
 	}
 	
-	// tra ve mot quan tot neu co o dong 0 hoac dong 7
-	// tra ve null neu khong co quan tot nao o dong 0 hoac dong 7
+	//tra ve quan tot neu tren dong 0 hoac dong 7 co quan tot
 	public Piece checkPromotion(Board board) {
 		for (int i = 0; i < 8; i++) {
-			// kiem tra dong dau tien (dong 0) co quan tot trang nao khong
 			if (board.getTile(0, i).getPiece() != null && board.getTile(0, i).getPiece().getName().equals("Pawn")) {
 				return board.getTile(0, i).getPiece();
 			}
-			// kiem tra dong cuoi (dong 7) co quan tot den nao khong
 			if (board.getTile(7, i).getPiece() != null && board.getTile(7, i).getPiece().getName().equals("Pawn")) {
 				return board.getTile(7, i).getPiece();
 			}
@@ -58,9 +58,6 @@ public class Model {
 		case 4:
 			piece = new Knight("Knight", pawn.getColor(), pawn.getIndex());
 			break;
-		default:
-			System.out.println("Lựa chọn không hợp lệ!");
-			return; // Thoát phương thức nếu lựa chọn không hợp lệ
 		}
 		// Thiết lập toạ độ cho quân cờ mới
 		if (piece != null) {
@@ -74,7 +71,6 @@ public class Model {
 			else {
 				black.getPieces()[pawn.getIndex()] = piece;
 			}
-
 		}
 	}
 	
@@ -93,14 +89,14 @@ public class Model {
 		return false; // Vua không bị chiếu
 	}
 
-	public boolean isCheckmate(Player player1, Player player2, Board board) {
+	public boolean isCheckmate(Player player, Player opponent, Board board) {
 		// Kiểm tra nếu đang bị chiếu
-		if (!isCheck(player1, player2, board)) {
+		if (!isCheck(player, opponent, board)) {
 			return false; // Không bị chiếu, không phải chiếu bí
 		}
 
 		// Duyệt qua tất cả các quân cờ của người chơi bị chiếu
-		for (Piece piece : player1.getPieces()) {
+		for (Piece piece : player.getPieces()) {
 			int[] originalPosition = piece.getCords().clone();
 
 			for (int[] move : piece.listValidMoves(board)) {
@@ -113,7 +109,7 @@ public class Model {
 				piece.setCords(move[0], move[1]);
 
 				// Kiểm tra nếu vua không còn bị chiếu
-				if (!isCheck(player1, player2, board)) {
+				if (!isCheck(player, opponent, board)) {
 					// Hoàn tác nước đi
 					board.setTile(targetPiece, move[0], move[1]); // Đặt lại quân cờ bị ăn (nếu có)
 					board.setTile(piece, originalPosition[0], originalPosition[1]);
@@ -128,7 +124,6 @@ public class Model {
 				piece.setCords(originalPosition[0], originalPosition[1]);
 			}
 		}
-
 		return true; // Không có nước đi nào thoát khỏi chiếu, đây là chiếu bí
 	}
 	
@@ -152,21 +147,15 @@ public class Model {
 		int[] originalCords = king.getCords().clone();
 		for (int col = kingCol; col != 2; col --) {
 			// Di chuyển vua tạm thời
-			board.setTile(null, originalCords[0], originalCords[1]);
-			board.setTile(king, row, col);
 			king.setCords(row, col);
 
 			// Kiểm tra nếu vua bị chiếu
 			if (isCheck(player, opponent, board)) {
 				// undo 
-				board.setTile(king, originalCords[0], originalCords[1]);
-				board.setTile(null, row, col);
 				king.setCords(originalCords[0], originalCords[1]);
 				return false;
 			}
 			// undo after move
-			board.setTile(king, originalCords[0], originalCords[1]);
-			board.setTile(null, row, col);
 			king.setCords(originalCords[0], originalCords[1]);
 		}
 		return true;
@@ -190,157 +179,104 @@ public class Model {
 		}
 		// check 
 		int[] originalCords = king.getCords().clone();
-		for (int col = kingCol; col != 6; col ++) {
+		for (int col = kingCol; col != 6; col++) {
 			// Di chuyển vua tạm thời
-			board.setTile(null, originalCords[0], originalCords[1]);
-			board.setTile(king, row, col);
 			king.setCords(row, col);
 
 			// Kiểm tra nếu vua bị chiếu
 			if (isCheck(player, opponent, board)) {
 				// undo 
-				board.setTile(king, originalCords[0], originalCords[1]);
-				board.setTile(null, row, col);
 				king.setCords(originalCords[0], originalCords[1]);
 				return false;
 			}
 			// undo after move
-			board.setTile(king, originalCords[0], originalCords[1]);
-			board.setTile(null, row, col);
 			king.setCords(originalCords[0], originalCords[1]);
 		}
 		return true;
 	}
-	
+
 	// them nuoc di nhap thanh cho vua neu co, cac quan co khac di binh thuong
 	public List<int[]> listMoveLegal(Player player, Player opponent, Piece piece,Board board) {
 		List<int[]> listMove = piece.listValidMoves(board);
 		if(piece.getName().equals("King")) {
 			if(castlingKingSide(board, player, opponent)) {
 				listMove.add(new int[] {piece.getCords()[0], 6});
-			}if(castlingQueenSide(board, player, opponent)) {
+			}
+			if(castlingQueenSide(board, player, opponent)) {
 				listMove.add(new int[] {piece.getCords()[0], 2});
 			}
 		}
 		return listMove;
 	}
-
-	public boolean castling(Board board, Player player1, Player player2, int colDes) {
-		if (colDes != 6 && colDes != 2) {
-			return false;
-		}
-
-		boolean isKingside = (colDes == 6);
-
-		Piece king = player1.getPiece(12);
-		int row = king.getCords()[0];
-
-		int rookCol = isKingside ? 7 : 0; // Xe vua (hàng bên phải) ở cột 7, Xe hậu (trái) ở cột 0
-		int kingCol = 4; // Vua ban đầu ở cột 4
-		int newKingCol = isKingside ? 6 : 2; // Vị trí mới của Vua
-
-		Piece rook = board.getTile(row, rookCol).getPiece();
-
-		// Kiểm tra xem Vua và Xe có còn ở vị trí ban đầu không
-		if (king.isHasMoved() || rook == null || rook.isHasMoved()) {
-			return false;
-		}
-
-		// Kiểm tra các ô giữa Vua và Xe
-		int step = isKingside ? 1 : -1;
-		for (int col = kingCol + step; col != rookCol; col += step) {
-			if (board.getTile(row, col).checkOccupied()) {
-				return false;
-			}
-		}
-
-		// Kiểm tra các ô Vua đi qua không bị chiếu
-		int[] originalCords = king.getCords().clone();
-		for (int col = kingCol; col != newKingCol + step; col += step) {
-			// Di chuyển vua tạm thời
-			board.setTile(null, originalCords[0], originalCords[1]);
-			board.setTile(king, row, col);
-			king.setCords(row, col);
-
-			// Kiểm tra nếu vua bị chiếu
-			if (isCheck(player1, player2, board)) {
-				// Hoàn tác nước đi
-				board.setTile(king, originalCords[0], originalCords[1]);
-				board.setTile(null, row, col);
-				king.setCords(originalCords[0], originalCords[1]);
-				return false;
-			}
-			// Hoàn tác nước đi sau mỗi bước kiểm tra
-			board.setTile(king, originalCords[0], originalCords[1]);
-			board.setTile(null, row, col);
-			king.setCords(originalCords[0], originalCords[1]);
-		}
-
-		king.setHasMoved(true);
-		rook.setHasMoved(true);
-
-		board.setTile(rook, row, kingCol + step);
-		board.setTile(null, row, rookCol);
-
-		if (isKingside) {
-			player1.getPiece(15).setCords(row, kingCol + step);
-		} else {
-			player1.getPiece(8).setCords(row, kingCol + step);
-		}
-		return true;
-	}
 	
-	public boolean setPlaying(Player player, Player opponent, Board board) {
-	    // Kiểm tra nếu vua đã chết
-	    if (!player.getPiece(12).getAlive()) {
-	        return false;
-	    }
-
-	    // Kiểm tra nếu đang bị chiếu bí
-	    if (isCheck(player, opponent, board) && isCheckmate(player, opponent, board)) {
-	        return false;
-	    }
-	    return true;
-	}
-
-
-
 	//thuc hien nuoc di
-	public void processMove(Board board, Piece piece, int[] newCords, Player player, Player opponent) {
-		if (player.getPiece(piece.getIndex()).getName().equals("King") && !player.getPiece(piece.getIndex()).isHasMoved()) {
-			castling(board, player, opponent, newCords[1]);
+	public void handleMove(Board board, Piece piece, int[] newCords, Player player, Player opponent) {
+		// vua thuc hien nhap thanh
+		if (piece.getName().equals("King") && piece.getCords()[1] == 4) {
+			if(newCords[1] == 2) {
+				player.movePiece(board, player.getPiece(8), new int[] {piece.getCords()[0],3}, opponent);
+			}
+			if(newCords[1] == 6) {
+				player.movePiece(board, player.getPiece(15), new int[] {piece.getCords()[0],5}, opponent);
+			}
 		}
 		player.movePiece(board, piece, newCords, opponent);
 	}
 	
+	// danh gia dua tren diem cua tung quan co con song, so nuoc di cua moi quan co, co bi chieu, chieu het khong, co nuoc di nhap thanh khong
 	public int heuristic(Player white, Player black, Board board) {
 	    int score = 0;
 	    // diem cho nguoi choi trang
 	    for (int i = 0; i < 16; i++) {
 	        if (white.getPiece(i).getAlive()) {
-	            score += white.getPiece(i).getValue();
-	            score += white.getPiece(i).listValidMoves(board).size();
+	            score += white.getPiece(i).getValue(); // lay gia tri cua quan co 
+	            score += white.getPiece(i).listValidMoves(board).size(); // lay so nuoc hop le cua quan co
 	        }
 	        if (black.getPiece(i).getAlive()) {
-	            score -= black.getPiece(i).getValue();
-	            score -= black.getPiece(i).listValidMoves(board).size();
+	            score -= black.getPiece(i).getValue(); // lay gia tri cua quan co
+	            score -= black.getPiece(i).listValidMoves(board).size(); // lay nuoc di hop le cua quan co
 	        }
 	    }
 	    // Kiểm tra trạng thái thắng/thua
 	    if (!setPlaying(white, black, board)) {
-	        score -= 9999; // Trắng thua
+	        score -= 10000; // Trắng thua
 	    }
 	    if (!setPlaying(black, white, board)) {
-	        score += 9999; // Đen thua
+	        score += 10000; // Đen thua
 	    }
+	    // kiem tra xem co bi chieu khong
+	    if(isCheck(white, black, board)) {
+	    	score -=50;
+	    }
+	    if(isCheck(black, white, board)) {
+	    	score +=50;
+	    }
+	    score+=castled(white, black, board);
+	    score-=castled(black, white, board);
 	    return score;
 	}
-
 	
+	public int castled(Player player, Player opponent, Board board) {
+		int score = 0;
+		if(castlingKingSide(board, player, opponent)) score+=30;
+		if(castlingQueenSide(board, player, opponent)) score+=30;
+		return score; 
+	}
+
 	public int[]minimax(boolean turnWhite,Board board, int depth, Player white, Player black) {
+		// dieu kien dung
 		if(depth == 0 || !setPlaying(turnWhite ? white : black, turnWhite? black: white, board)) {
-			return new int[] {heuristic(white, black, board),-1,-1,-1,-1};
+			int score = heuristic(white, black, board);
+			// ket thuc som thi cong them diem
+			if(turnWhite && depth > 0) {
+				score += depth * 100;
+			}
+			if(!turnWhite && depth > 0) {
+				score -= depth * 100;
+			}
+			return new int[] {score,-1,-1,-1,-1};
 		}
+
 		int[] bestMove = new int[5];
 		int bestValue = turnWhite ? Integer.MIN_VALUE: Integer.MAX_VALUE;
 		//ben trang
@@ -348,16 +284,17 @@ public class Model {
 			for(int i = 0; i < 16; i++) {
 				if(white.getPiece(i).getAlive()) {
 					Piece piece = white.getPiece(i);
-					for(int[] move : listMoveLegal(white, black, white.getPiece(i), board)) {
+//					for(int[] move : listMoveLegal(white, black, white.getPiece(i), board)) {
+					for(int[] move : piece.listValidMoves(board)) {
 						Player max = new Player(white);
 						Player min = new Player(black);
 						Board newBoard = new Board(max, min);
 //						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
-						// Cap nhat trang thai board
+						// Cap nhat trang thai board						
+						handleMove(newBoard, max.getPiece(i), move, max, min);
 						if(checkPromotion(newBoard)!=null) {
 							promote(newBoard,max, min,checkPromotion(newBoard), 1);
 						}
-						processMove(newBoard, max.getPiece(i), move, max, min);
 //						System.out.println(newBoard.toString()+"sau khi di chuyen");
 						
 						int[] result = minimax(!turnWhite, newBoard, depth - 1, max, min);
@@ -380,18 +317,19 @@ public class Model {
 				if(black.getPiece(i).getAlive()) {
 					Piece piece = black.getPiece(i);
 					for(int[] move : listMoveLegal(black, white, black.getPiece(i), board)) {
-						Player max = new Player(black);
-						Player min = new Player(white);
+						Player max = new Player(white);
+						Player min = new Player(black);
 						Board newBoard = new Board(min, max);
+
 //						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
 						// Cap nhat trang thai board
+						handleMove(newBoard, min.getPiece(i), move, min, max);
 						if(checkPromotion(newBoard)!=null) {
 							promote(newBoard,max, min,checkPromotion(newBoard), 1);
 						}
-						processMove(newBoard, max.getPiece(i), move, max, min);
 //						System.out.println(newBoard.toString()+"sau khi di chuyen");
 						
-						int[] result = minimax(!turnWhite, newBoard, depth - 1, min, max);
+						int[] result = minimax(!turnWhite, newBoard, depth - 1, max, min);
 						
 						int currentValue = result[0];
 //						System.out.println(currentValue);
@@ -413,7 +351,15 @@ public class Model {
 	
 	public int[] alphabeta(boolean turnWhite, int depth, Board board, Player white, Player black, int alpha, int beta) {
 		if(depth == 0 || !setPlaying(turnWhite ? white : black, turnWhite? black: white, board)) {
-			return new int[] {heuristic(white, black, board),-1,-1,-1,-1};
+			int score = heuristic(white, black, board);
+			// ket thuc som thi cong them diem
+			if(turnWhite && depth > 0) {
+				score += depth * 100;
+			}
+			if(!turnWhite && depth > 0) {
+				score -= depth * 100;
+			}
+			return new int[] {score,-1,-1,-1,-1};
 		}
 		int[] bestMove = new int[5];
 		int bestValue = turnWhite ? Integer.MIN_VALUE: Integer.MAX_VALUE;
@@ -428,10 +374,10 @@ public class Model {
 								Board newBoard = new Board(max, min);
 //								System.out.println(newBoard.toString()+"Truoc khi di chuyen");
 								// Cap nhat trang thai board
+								handleMove(newBoard, max.getPiece(i), move, max, min);
 								if(checkPromotion(newBoard)!=null) {
 									promote(newBoard,max, min,checkPromotion(newBoard), 1);
 								}
-								processMove(newBoard, max.getPiece(i), move, max, min);
 //								System.out.println(newBoard.toString()+"sau khi di chuyen");
 								
 								int[] result = alphabeta(!turnWhite, depth - 1, newBoard, max, min,  alpha, beta);
@@ -463,10 +409,10 @@ public class Model {
 								Board newBoard = new Board(min, max);
 //								System.out.println(newBoard.toString()+"Truoc khi di chuyen");
 								// Cap nhat trang thai board
+								handleMove(newBoard, max.getPiece(i), move, max, min);
 								if (checkPromotion(newBoard) != null) {
 									promote(newBoard, max, min, checkPromotion(newBoard), 1);
 								}
-								processMove(newBoard, max.getPiece(i), move, max, min);
 //								System.out.println(newBoard.toString()+"sau khi di chuyen");
 
 								int[] result = alphabeta(!turnWhite, depth - 1, newBoard, min, max, alpha, beta);
@@ -488,27 +434,45 @@ public class Model {
 							}
 						}
 					}
-				}
-				
+				}				
 				bestMove[0] = bestValue;
 			    return bestMove; 
 			}
 	
+	public boolean getPlaying() {
+		return this.isPlaying;
+	}
 	
 	public void setPlaying(boolean isPlaying) {
 		this.isPlaying = isPlaying;
+	}
+	
+	public boolean setPlaying(Player player, Player opponent, Board board) {
+	    // Kiểm tra nếu vua đã chết
+	    if (!player.getPiece(12).getAlive()) {
+	        return false;
+	    }
+	    // Kiểm tra nếu đang bị chiếu bí
+	    if (isCheckmate(player, opponent, board)) {
+	        return false;
+	    }
+	    return true;
 	}
 
 	public void setCurP(PieceDisplay pieceDisplay) {
 		this.currentP = pieceDisplay;
 	}
+	
+	public boolean getTurn() {
+		return turn;
+	}
 
 	public void setTurn(boolean turn) {
 		this.turn = turn;
 	}
-
-	public boolean getPlaying() {
-		return this.isPlaying;
+	
+	public PieceDisplay getCurP() {
+		return currentP;
 	}
 
 	public Player getPlayer1() {
@@ -522,53 +486,62 @@ public class Model {
 	public Board getBoard() {
 		return board;
 	}
-
-	public PieceDisplay getCurP() {
-		return currentP;
-	}
-
-	public boolean getTurn() {
-		return turn;
-	}
-
+	
 	public static void main(String[] args) {
 	    Model m = new Model();
 	    m.addPlayers("White");
-	    m.processMove(m.getBoard(), m.getPlayer1().getPiece(5), new int[]{4, 5}, m.getPlayer1(), m.getPlayer2());
-	    m.processMove(m.getBoard(), m.getPlayer2().getPiece(4), new int[]{3, 4}, m.getPlayer2(), m.getPlayer1());
-	    m.processMove(m.getBoard(), m.getPlayer1().getPiece(6), new int[]{4, 6}, m.getPlayer1(), m.getPlayer2());
+	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(3), new int[]{4, 3}, m.getPlayer1(), m.getPlayer2());
+	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(4), new int[]{3, 4}, m.getPlayer2(), m.getPlayer1());
+	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(3), new int[]{3, 4}, m.getPlayer1(), m.getPlayer2());
+	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(13), new int[]{4, 1}, m.getPlayer2(), m.getPlayer1());
+	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(2), new int[]{5, 2}, m.getPlayer1(), m.getPlayer2());
+	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(13), new int[]{5, 2}, m.getPlayer2(), m.getPlayer1());
+	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(1), new int[]{5, 2}, m.getPlayer1(), m.getPlayer2());
+	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(14), new int[]{2, 7}, m.getPlayer2(), m.getPlayer1());
+	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(11), new int[]{3, 3}, m.getPlayer1(), m.getPlayer2());
+	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(11), new int[]{4, 7}, m.getPlayer2(), m.getPlayer1());
+	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(3), new int[]{2, 4}, m.getPlayer1(), m.getPlayer2());
+	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(11), new int[]{6, 5}, m.getPlayer2(), m.getPlayer1());
+	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(12), new int[]{6, 5}, m.getPlayer1(), m.getPlayer2());
+	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(3), new int[]{2, 4}, m.getPlayer2(), m.getPlayer1());
+//	    System.out.println(m.getBoard());
+	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(11), new int[] {2, 4}, m.getPlayer1(), m.getPlayer2());
+	    m.minimax(false, m.getBoard(), 1, m.getPlayer1(), m.getPlayer2());
+//	    System.out.println(m.getBoard());
 
-	    // Khởi tạo Runtime để đo bộ nhớ
-	    Runtime runtime = Runtime.getRuntime();
-
-	    // Gọi garbage collector để dọn dẹp trước khi đo
-	    runtime.gc();
-
-	    // Bộ nhớ trước khi chạy minimax
-	    long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
-
-	    // Bắt đầu đo thời gian
-	    long startTime = System.nanoTime();
-
-	    // Chạy minimax
+//	    for(int [] move : m.listMoveLegal(m.getPlayer2(), m.getPlayer1(), m.getPlayer2().getPiece(15), m.getBoard())) {
+//	    	System.out.println(move[0]);
+//	    	System.out.println(move[1]);
+//	    }
+//	    Runtime runtime = Runtime.getRuntime();
+//
+//	    // Gọi garbage collector để dọn dẹp trước khi đo
+//	    runtime.gc();
+//
+//	    // Bộ nhớ trước khi chạy minimax
+//	    long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
+//
+//	    // Bắt đầu đo thời gian
+//	    long startTime = System.nanoTime();
+//
+//	    // Chạy minimax
 //	    int[] bestMove = m.minimax(false, m.getBoard(), 4, m.getPlayer1(), m.getPlayer2());
-//	    2542ms, 100428KB
-	    int[] bestMove = m.alphabeta(false, 5, m.getBoard(), m.getPlayer1(), m.getPlayer2(), Integer.MIN_VALUE, Integer.MAX_VALUE);
-//		787ms, 315424KB
-	    // Kết thúc đo thời gian
-	    long endTime = System.nanoTime();
-
-	    // Bộ nhớ sau khi chạy minimax
-	    long memoryAfter = runtime.totalMemory() - runtime.freeMemory();
-
-	    // Tính thời gian thực thi
-	    long duration = (endTime - startTime) / 1_000_000; // Đổi ra mili giây
-	    System.out.println("Thời gian thực thi minimax: " + duration + " ms");
-
-	    // Tính bộ nhớ sử dụng
-	    long memoryUsed = (memoryAfter - memoryBefore) / 1024; // Đổi ra KB
-	    System.out.println("Bộ nhớ sử dụng minimax: " + memoryUsed + " KB");
-	    System.out.println(m.getBoard().toString());
+////	    int[] bestMove = m.alphabeta(false, 1, m.getBoard(), m.getPlayer1(), m.getPlayer2(), Integer.MIN_VALUE, Integer.MAX_VALUE);
+//	    // Kết thúc đo thời gian
+//	    long endTime = System.nanoTime();
+//
+//	    // Bộ nhớ sau khi chạy minimax
+//	    long memoryAfter = runtime.totalMemory() - runtime.freeMemory();
+//
+//	    // Tính thời gian thực thi
+//	    long duration = (endTime - startTime) / 1_000_000; // Đổi ra mili giây
+//	    System.out.println("Thời gian thực thi minimax: " + duration + " ms");
+//
+//	    // Tính bộ nhớ sử dụng
+//	    long memoryUsed = (memoryAfter - memoryBefore) / 1024; // Đổi ra KB
+//	    System.out.println("Bộ nhớ sử dụng minimax: " + memoryUsed + " KB");	    
+//	    for(int i: bestMove)
+//	    	System.out.println(i);
 	}
 
 }

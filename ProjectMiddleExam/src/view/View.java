@@ -19,20 +19,13 @@ import javax.swing.JPanel;
 
 public class View {
 	private JFrame frame;
-	private JPanel gameBoard;
+	private JPanel gameBoard, panel, topPanel, bottomPanel, rightPanel, leftPanel;
 	private JPanel[][] tileSet;
 	private int[][] tileCoordsX;
 	private int[][] tileCoordsY;
 	private JLabel turnLabel;
-	private JPanel starterPanel;
-	private JPanel panel;
 	private PieceDisplay[][] pieces;
-	private JPanel topPanel;
-	private JPanel rightPanel;
-	private JPanel leftPanel;
-	private JPanel bottomPanel, pieceLeftPanel, pieceRightPanel;
 
-    
 	public View() {
 		turnLabel = new JLabel("San sang!");
 		frame = new JFrame("Chess");
@@ -46,12 +39,11 @@ public class View {
 		gameBoard.setLayout(new BorderLayout());
 
 		panel = new JPanel();
-		GridLayout chessBoard = new GridLayout(8, 8);
 		tileSet = new JPanel[8][8];
 		tileCoordsX = new int[8][8];
 		tileCoordsY = new int[8][8];
 		panel.setPreferredSize(new Dimension(800, 800)); 
-		panel.setLayout(chessBoard);
+		panel.setLayout(new GridLayout(8, 8));
 
 		Color tempColor;
 		boolean color = true;
@@ -102,13 +94,13 @@ public class View {
 		
 		bottomPanel = new JPanel();
 		bottomPanel.setPreferredSize(new Dimension(900, 25));
+		
 		frame.add(topPanel, BorderLayout.NORTH);
 		frame.add(gameBoard, BorderLayout.CENTER);
 		frame.add(rightPanel, BorderLayout.EAST);
 		frame.add(leftPanel, BorderLayout.WEST);
 		frame.add(bottomPanel, BorderLayout.SOUTH);
 		
-
 		pieces = new PieceDisplay[2][16];
 		initializePieces();
 
@@ -159,6 +151,8 @@ public class View {
 			tileSet[6][j].add(pieces[1][j]); // White pawns in the second-last row
 		}
 	}
+	
+
 		
 	public String showPromotionDialog() {
 	    // Tạo dialog phong cấp
@@ -192,6 +186,40 @@ public class View {
 	    // Trả về lựa chọn của người chơi
 	    return selectedPiece[0];
 	}
+	
+	public String showStartColorDialog() {
+	    // Tạo dialog để chọn màu bắt đầu
+	    JDialog colorDialog = new JDialog(frame, "Chọn màu bắt đầu", true);
+	    colorDialog.setLayout(new FlowLayout());
+	    colorDialog.setSize(300, 150);
+
+	    JLabel label = new JLabel("Chọn màu để bắt đầu:");
+	    label.setFont(new Font("Arial", Font.BOLD, 16));
+	    colorDialog.add(label);
+
+	    // Các lựa chọn: trắng hoặc đen
+	    String[] options = { "Bắt đầu với trắng", "Bắt đầu với đen" };
+	    Map<String, JButton> buttons = new HashMap<>();
+	    final String[] selectedColor = { null };
+
+	    for (String option : options) {
+	        JButton button = new JButton(option);
+	        button.addActionListener(e -> {
+	            selectedColor[0] = option;
+	            colorDialog.dispose();
+	        });
+	        buttons.put(option, button);
+	        colorDialog.add(button);
+	    }
+
+	    // Hiển thị dialog ở giữa màn hình
+	    colorDialog.setLocationRelativeTo(frame);
+	    colorDialog.setVisible(true);
+
+	    // Trả về lựa chọn của người chơi
+	    return selectedColor[0];
+	}
+
 
 
 	public void recolorTiles() {
@@ -207,10 +235,6 @@ public class View {
 	            color = !color; // Đảo màu cho ô tiếp theo
 	        }
 	    }
-	}
-
-	public JFrame getFrame() {
-		return frame;
 	}
 
 	public PieceDisplay getPiece(int x, int y) {
@@ -243,7 +267,6 @@ public class View {
 	}
 
 	// Returns the y coordinate of a certain tile in the board.
-
 	public int getTileCoordY(Object o) {
 		int y = 0;
 		for (int i = 0; i < 8; i++)
@@ -256,11 +279,6 @@ public class View {
 			return 0;
 	}
 
-	// Gets the gameboard, the mainframe of the GUI. return gameBoard reference.
-
-	public JPanel getGameBoard() {
-		return gameBoard;
-	}
 
 	// Moves piece to said tile/location using x and y coordinates.
 	public void setPieceLocation(PieceDisplay piece, int x, int y) {
@@ -280,28 +298,9 @@ public class View {
 		destPanel.repaint();
 	}
 	
-
-	// Sets the text at the top to determine whose turn it is and if the game has
-	// ended.
-
+	// Sets the text at the top to determine whose turn it is and if the game has ended.
 	public void setTurnLabelText(String t) {
 		turnLabel.setText(t);
-	}
-	
-	public void setPieceRightPanel(boolean visible) {
-		pieceRightPanel.setVisible(visible);
-	}
-	
-	public JPanel getPieceRightPanel() {
-		return pieceRightPanel;
-	}
-	
-	public void setPieceLeftPanel(boolean visible) {
-		pieceLeftPanel.setVisible(visible);
-	}
-	
-	public JPanel getPieceLeftPanel() {
-		return pieceLeftPanel;
 	}
 
 }

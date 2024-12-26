@@ -1,15 +1,17 @@
-package model;
+package piece;
 
 import java.util.List;
+
+import model.Board;
 
 public abstract class Piece {
 	private String name;
 	private String color;
 	private boolean alive;
 	private boolean hasMoved;
-	private int index; // position in player's list
-	private int[] cords; // position in board, [0] is row, [1] is col
-	private int value; // The value of the piece is used to calculate the heuristic
+	private int index; // vi tri quan co trong mang quan co cua nguoi choi
+	private int[] cords; // vi quan co tren ban co, cords[0] la dong, cords[1] la cot
+	private int value; // gia tri cua quan co
 
 	public Piece(String name, String color, int index, int value) {
 		this.name = name;
@@ -20,6 +22,7 @@ public abstract class Piece {
 		this.value = value;
 	}
 	
+	//copy tu piece khac
 	public Piece(Piece other) {
 	    this.name = other.getName();
 	    this.color = other.getColor();

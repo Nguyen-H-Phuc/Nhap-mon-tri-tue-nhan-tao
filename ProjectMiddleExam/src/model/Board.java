@@ -1,5 +1,7 @@
 package model;
 
+import piece.Piece;
+
 public class Board {
 	private Tile[][] tiles;
 	
@@ -12,12 +14,16 @@ public class Board {
 		}
 		// dat quan co cua nguoi choi p1 vao vi tri
 		for(Piece piece : p1.getPieces()) {
+			if(piece.getAlive()) {
 			tiles[piece.getCords()[0]][piece.getCords()[1]].setPiece(piece);
+		}
 		}
 		// dat quan co cua nguoi choi p2 vao vi tri
 		for(Piece piece : p2.getPieces()) {
+			if(piece.getAlive()) {
 			tiles[piece.getCords()[0]][piece.getCords()[1]].setPiece(piece);
-		}
+			}
+			}
 	}
 
 	public Tile[][] getTiles() {

@@ -1,12 +1,14 @@
-package model;
+package piece;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Board;
+
 public class King extends Piece {
 
 	public King(String name, String color, int index) {
-		super(name, color, index,1000);
+		super(name, color, index,10000);
 	}
 
 	public King(King originalPiece) {

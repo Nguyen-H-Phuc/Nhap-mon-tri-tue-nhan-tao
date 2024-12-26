@@ -1,7 +1,9 @@
-package model;
+package piece;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import model.Board;
 
 public class Rook extends Piece {
 
