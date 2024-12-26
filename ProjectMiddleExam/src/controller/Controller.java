@@ -3,6 +3,7 @@ package controller;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
@@ -24,9 +25,9 @@ public class Controller {
 	}
 
 	private void initializeTeams() {
-		getModel().addPlayers("White");
-		getModel().setPlaying(true);
-		getModel().setTurn(true);
+		model.addPlayers("White");
+		model.setPlaying(true);
+		model.setTurn(true);
 		initializeListeners();
 		initializeTiles();
 		if (!startWithWhite) {
@@ -55,7 +56,7 @@ public class Controller {
 			for (int j = 0; j < 8; j++) {
 				if (view.getPiece(i, j) != null) {
 					view.getPiece(i, j).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-					view.getPiece(i, j).addMouseListener(new MouseListener() {
+					view.getPiece(i, j).addMouseListener(new MouseAdapter() {
 
 						@Override
 						public void mouseClicked(MouseEvent e) {
@@ -151,22 +152,6 @@ public class Controller {
 							}
 
 						}
-
-						@Override
-						public void mousePressed(MouseEvent e) {
-						}
-
-						@Override
-						public void mouseReleased(MouseEvent e) {
-						}
-
-						@Override
-						public void mouseEntered(MouseEvent e) {
-						}
-
-						@Override
-						public void mouseExited(MouseEvent e) {
-						}
 					});
 				}
 			}
@@ -176,33 +161,26 @@ public class Controller {
 	public void initializeTiles() {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				getView().getPanelTile(i, j).addMouseListener(new MouseListener() {
-
-					Model m;
-					View v;
-					Player p1;
-					Player p2;
+				view.getPanelTile(i, j).addMouseListener(new MouseAdapter() {
 
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						m = getModel();
-						p1 = m.getPlayer1();
-						p2 = m.getPlayer2();
-						v = getView();
+						Player p1 = model.getPlayer1();
+						Player p2 = model.getPlayer2();
 
-						if (m.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
-							if (m.getCurP() != null) {
-								if (e.getSource() == m.getCurP().getParent()) {
-									m.setCurP(null);
+						if (model.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
+							if (model.getCurP() != null) {
+								if (e.getSource() == model.getCurP().getParent()) {
+									model.setCurP(null);
 								}
 
 								else if (((JPanel) e.getSource()).getComponentCount() != 0) {
-									m.setCurP(null);
+									model.setCurP(null);
 								} else {
-									v.recolorTiles();
+									view.recolorTiles();
 									// Moves piece to said tile
 
-									v.setPieceLocation(m.getCurP(), (JPanel) e.getSource());
+									view.setPieceLocation(model.getCurP(), (JPanel) e.getSource());
 
 									// Gets coordinates of tile
 									Object o = e.getSource();
@@ -210,69 +188,69 @@ public class Controller {
 									System.out.println(newCords[0]);
 
 //									p1.movePiece(m.getBoard(), p1.getPiece(m.getCurP().getIndex()), newCords, p2);
-									if (p1.getPiece(m.getCurP().getIndex()).getName().equals("King") && newCords[1] == 6
-											&& p1.getPiece(m.getCurP().getIndex()).getCords()[1] == 4) {
-										v.setPieceLocation(v.getPiece(7, 7), v.getPanelTile(7, 5));
+									if (p1.getPiece(model.getCurP().getIndex()).getName().equals("King") && newCords[1] == 6
+											&& p1.getPiece(model.getCurP().getIndex()).getCords()[1] == 4) {
+										view.setPieceLocation(view.getPiece(7, 7), view.getPanelTile(7, 5));
 									}
 
-									if (p1.getPiece(m.getCurP().getIndex()).getName().equals("King") && newCords[1] == 2
-											&& p1.getPiece(m.getCurP().getIndex()).getCords()[1] == 4) {
-										v.setPieceLocation(v.getPiece(7, 0), v.getPanelTile(7, 3));
+									if (p1.getPiece(model.getCurP().getIndex()).getName().equals("King") && newCords[1] == 2
+											&& p1.getPiece(model.getCurP().getIndex()).getCords()[1] == 4) {
+										view.setPieceLocation(view.getPiece(7, 0), view.getPanelTile(7, 3));
 									}
 																		
-									m.handleMove(m.getBoard(), p1.getPiece(m.getCurP().getIndex()), newCords, p1, p2);
-									m.setPlaying(!p1.checkWin(p2));
-									if (p1.getPiece((m.getCurP().getIndex())).getName().equals("Pawn") && newCords[0] == 0) {
-										promote(m.getCurP(), v, m);
+									model.handleMove(model.getBoard(), p1.getPiece(model.getCurP().getIndex()), newCords, p1, p2);
+									model.setPlaying(!p1.checkWin(p2));
+									if (p1.getPiece((model.getCurP().getIndex())).getName().equals("Pawn") && newCords[0] == 0) {
+										promote(model.getCurP(), view, model);
 									}
-									System.out.println(m.getBoard());
+									System.out.println(model.getBoard());
 									endTurn();
-									m.setCurP(null);
-									endGame(m.getTurn());
+									model.setCurP(null);
+									endGame(model.getTurn());
 //									 turn ai
-									if(m.getPlaying()) {
-										handleTurnAI(m, v, p1, p2, false);
+									if(model.getPlaying()) {
+										handleTurnAI(model, view, p1, p2, false);
 									}
 								}
 							}
 						} 
-						if (!m.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
-							if (m.getCurP() != null) {
-								if (e.getSource() == m.getCurP().getParent()) {
-									m.setCurP(null);
+						if (!model.getTurn() && ((JPanel) e.getComponent()).getBackground().equals(Color.green)) {
+							if (model.getCurP() != null) {
+								if (e.getSource() == model.getCurP().getParent()) {
+									model.setCurP(null);
 								}
 								else if (((JPanel) e.getSource()).getComponentCount() != 0) {
-									m.setCurP(null);
+									model.setCurP(null);
 								} else {
 									view.recolorTiles();
 									// Moves piece to said tile
-									view.setPieceLocation(m.getCurP(), (JPanel) e.getSource());
+									view.setPieceLocation(model.getCurP(), (JPanel) e.getSource());
 
 									// Gets coordinates of tile
 									Object o = e.getSource();
 									int[] newCords = getCoordinates(o);
 
 //									p2.movePiece(m.getBoard(), p2.getPiece(m.getCurP().getIndex()), newCords, p1);
-									if (p2.getPiece(m.getCurP().getIndex()).getName().equals("King") && newCords[1] == 6
-											&& p2.getPiece(m.getCurP().getIndex()).getCords()[1] == 4) {
+									if (p2.getPiece(model.getCurP().getIndex()).getName().equals("King") && newCords[1] == 6
+											&& p2.getPiece(model.getCurP().getIndex()).getCords()[1] == 4) {
 										view.setPieceLocation(view.getPiece(0, 7), view.getPanelTile(0, 5));
 									}
-									if (p2.getPiece(m.getCurP().getIndex()).getName().equals("King") && newCords[1] == 2
-											&& p2.getPiece(m.getCurP().getIndex()).getCords()[1] == 4) {
+									if (p2.getPiece(model.getCurP().getIndex()).getName().equals("King") && newCords[1] == 2
+											&& p2.getPiece(model.getCurP().getIndex()).getCords()[1] == 4) {
 										view.setPieceLocation(view.getPiece(0, 0), view.getPanelTile(0, 3));
 									}
-									m.handleMove(m.getBoard(), p2.getPiece(m.getCurP().getIndex()), newCords, p2, p1);
-									if (p2.getPiece((m.getCurP().getIndex())).getName().equals("Pawn") && newCords[0] == 0) {
-										promote(m.getCurP(), v, m);
+									model.handleMove(model.getBoard(), p2.getPiece(model.getCurP().getIndex()), newCords, p2, p1);
+									if (p2.getPiece((model.getCurP().getIndex())).getName().equals("Pawn") && newCords[0] == 0) {
+										promote(model.getCurP(), view, model);
 									}
-									m.setPlaying(!p2.checkWin(p1));
+									model.setPlaying(!p2.checkWin(p1));
 
 									endTurn();
-									m.setCurP(null);
-									endGame(m.getTurn());
+									model.setCurP(null);
+									endGame(model.getTurn());
 
-									if(m.getPlaying()) {
-										handleTurnAI(m, v, p1, p2, m.getTurn());
+									if(model.getPlaying()) {
+										handleTurnAI(model, view, p1, p2, model.getTurn());
 									}
 								}
 							}
@@ -280,17 +258,8 @@ public class Controller {
 
 					}
 					@Override
-					public void mousePressed(MouseEvent e) {
-					}
-
-					@Override
-					public void mouseReleased(MouseEvent e) {
-					}
-
-					@Override
 					public void mouseEntered(MouseEvent e) {
-						m = getModel();
-						if (((JPanel) e.getSource()).getBackground() == Color.green && m.getCurP() != null
+						if (((JPanel) e.getSource()).getBackground() == Color.green && model.getCurP() != null
 								&& ((JPanel) e.getSource()).getComponentCount() == 0) {
 							((Component) e.getSource()).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 						} else {
@@ -298,11 +267,6 @@ public class Controller {
 						}
 
 					}
-
-					@Override
-					public void mouseExited(MouseEvent e) {
-					}
-
 				});
 
 			}
@@ -376,24 +340,24 @@ public class Controller {
 		}
 		case "Rook": {
 			currP.setNameAndUpdateIcon("Rook");
-			m.promote(m.getBoard(), m.getPlayer1(), m.getPlayer2(), getModel().checkPromotion(m.getBoard()), 2);
+			m.promote(m.getBoard(), m.getPlayer1(), m.getPlayer2(), model.checkPromotion(m.getBoard()), 2);
 			break;
 		}
 		case "Bishop": {
 			currP.setNameAndUpdateIcon("Bishop");
-			m.promote(m.getBoard(), m.getPlayer1(), m.getPlayer2(), getModel().checkPromotion(m.getBoard()), 3);
+			m.promote(m.getBoard(), m.getPlayer1(), m.getPlayer2(), model.checkPromotion(m.getBoard()), 3);
 			break;
 		}
 		case "Knight": {
 			currP.setNameAndUpdateIcon("Knight");
-			m.promote(m.getBoard(), m.getPlayer1(), m.getPlayer2(), getModel().checkPromotion(m.getBoard()), 4);
+			m.promote(m.getBoard(), m.getPlayer1(), m.getPlayer2(), model.checkPromotion(m.getBoard()), 4);
 			break;
 		}
 		}
 	}
 	
 	public boolean startWithWhite() {
-		String startWithWhite = getView().showStartColorDialog();
+		String startWithWhite = view.showStartColorDialog();
 		if(startWithWhite.equalsIgnoreCase("Bắt đầu với trắng")) {
 			return true;
 		}
@@ -406,28 +370,26 @@ public class Controller {
 	public void removeListeners() {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				if (getView().getPiece(i, j) != null) {
-					getView().getPiece(i, j).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-					getView().getPiece(i, j).removeMouseListener(getView().getPiece(i, j).getMouseListeners()[0]);
+				if (view.getPiece(i, j) != null) {
+					view.getPiece(i, j).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					view.getPiece(i, j).removeMouseListener(view.getPiece(i, j).getMouseListeners()[0]);
 				}
 			}
 		}
 	}
 
 	public void endGame(boolean bWin) {
-		Model m = getModel();
-
 		if (!bWin) {
 			// Kiểm tra thắng bằng chiếu bí hoặc loại vua
-			if (m.getPlayer1().checkWin(m.getPlayer2())
-					|| m.isCheckmate(m.getPlayer2(), m.getPlayer1(), m.getBoard())) {
-				getView().setTurnLabelText("Player 1 wins!");
+			if (model.getPlayer1().checkWin(model.getPlayer2())
+					|| model.isCheckmate(model.getPlayer2(), model.getPlayer1(), model.getBoard())) {
+				view.setTurnLabelText("Player 1 wins!");
 				removeListeners(); // Kết thúc trò chơi
 			}
 		} else {
-			if (m.getPlayer2().checkWin(m.getPlayer1())
-					|| m.isCheckmate(m.getPlayer1(), m.getPlayer2(), m.getBoard())) {
-				getView().setTurnLabelText("Player 2 wins!");
+			if (model.getPlayer2().checkWin(model.getPlayer1())
+					|| model.isCheckmate(model.getPlayer1(), model.getPlayer2(), model.getBoard())) {
+				view.setTurnLabelText("Player 2 wins!");
 				removeListeners(); // Kết thúc trò chơi
 			}
 		}
@@ -444,12 +406,5 @@ public class Controller {
 		newCords[1] = view.getTileCoordX(o);
 		return newCords;
 	}
-
-	public Model getModel() {
-		return model;
-	}
-
-	public View getView() {
-		return view;
-	}
 }
+
