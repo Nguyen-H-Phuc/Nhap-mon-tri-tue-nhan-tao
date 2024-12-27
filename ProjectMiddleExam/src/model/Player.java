@@ -110,9 +110,4 @@ public class Player {
 		pieces[piece.getIndex()].setHasMoved(true);
 	}
 
-	@Override
-	public String toString() {
-		return "Player" + color;
-	}
-
 }

@@ -31,9 +31,6 @@ public class Controller {
 		initializeTiles();
 		if (!startWithWhite) {
 			int[] bestMove = model.minimax(true, model.getBoard(), 1, model.getPlayer1(), model.getPlayer2());
-			for (int i : bestMove) {
-				System.out.println(i);
-			}
 			model.setCurP(view.getPiece(bestMove[3], bestMove[4]));
 			int[] move = { bestMove[1], bestMove[2] };
 			if (view.getPanelTile(bestMove[1], bestMove[2]).getComponentCount() > 0) {
@@ -43,7 +40,6 @@ public class Controller {
 					model.getPlayer2());
 			view.setPieceLocation(model.getCurP(), view.getPanelTile(bestMove[1], bestMove[2]));
 			System.out.println(model.getBoard().toString());
-			System.out.println(true);
 			endTurn();
 			model.setCurP(null);
 			endGame(model.getPlaying());
@@ -66,7 +62,6 @@ public class Controller {
 							if (model.getTurn() && p1.getColor().equals(((PieceDisplay) e.getSource()).getColor())) {
 								if (model.getCurP() == null) {
 									model.setCurP((PieceDisplay) e.getSource());
-									System.out.println(model.getCurP().getIndex());
 									// Highlight valid moves in green
 									for (int[] validMove : model.listMoveLegal(p1, p2,
 											p1.getPiece(model.getCurP().getIndex()),model.getBoard())) {
@@ -85,7 +80,6 @@ public class Controller {
 								int[] newCords = getCoordinates(o);
 
 								model.handleMove(model.getBoard(), p1.getPiece(model.getCurP().getIndex()), newCords, p1, p2);
-								model.setPlaying(!p1.checkWin(p2) || model.isCheckmate(p1, p2, model.getBoard()));
 
 								int destX = view.getTileCoordX((JPanel) ((PieceDisplay) e.getSource()).getParent());
 								int destY = view.getTileCoordY((JPanel) ((PieceDisplay) e.getSource()).getParent());
@@ -129,7 +123,6 @@ public class Controller {
 								int[] newCords = getCoordinates(o);
 
 								p2.movePiece(model.getBoard(), p2.getPiece(model.getCurP().getIndex()), newCords, p1);
-								model.setPlaying(!p2.checkWin(p1) || model.isCheckmate(p2, p1, model.getBoard()));
 
 								int destX = view.getTileCoordX((JPanel) ((PieceDisplay) e.getSource()).getParent());
 								int destY = view.getTileCoordY((JPanel) ((PieceDisplay) e.getSource()).getParent());
@@ -172,21 +165,15 @@ public class Controller {
 								if (e.getSource() == model.getCurP().getParent()) {
 									model.setCurP(null);
 								}
-
 								else if (((JPanel) e.getSource()).getComponentCount() != 0) {
 									model.setCurP(null);
 								} else {
 									view.recolorTiles();
 									// Moves piece to said tile
-
 									view.setPieceLocation(model.getCurP(), (JPanel) e.getSource());
-
 									// Gets coordinates of tile
 									Object o = e.getSource();
 									int[] newCords = getCoordinates(o);
-									System.out.println(newCords[0]);
-
-//									p1.movePiece(m.getBoard(), p1.getPiece(m.getCurP().getIndex()), newCords, p2);
 									if (p1.getPiece(model.getCurP().getIndex()).getName().equals("King") && newCords[1] == 6
 											&& p1.getPiece(model.getCurP().getIndex()).getCords()[1] == 4) {
 										view.setPieceLocation(view.getPiece(7, 7), view.getPanelTile(7, 5));
@@ -228,8 +215,6 @@ public class Controller {
 									// Gets coordinates of tile
 									Object o = e.getSource();
 									int[] newCords = getCoordinates(o);
-
-//									p2.movePiece(m.getBoard(), p2.getPiece(m.getCurP().getIndex()), newCords, p1);
 									if (p2.getPiece(model.getCurP().getIndex()).getName().equals("King") && newCords[1] == 6
 											&& p2.getPiece(model.getCurP().getIndex()).getCords()[1] == 4) {
 										view.setPieceLocation(view.getPiece(0, 7), view.getPanelTile(0, 5));
@@ -305,7 +290,6 @@ public class Controller {
 		}
 		model.handleMove(model.getBoard(), black.getPiece(model.getCurP().getIndex()), newCords, black, white);
 		view.setPieceLocation(model.getCurP(), view.getPanelTile(bestMove[1],bestMove[2]));
-		System.out.println(model.getBoard().getTile(newCords[0], newCords[1]).getPiece().getName());
 		// phong cap
 		if (model.getBoard().getTile(newCords[0], newCords[1]).getPiece().getName().equals("Pawn") && (newCords[0] == 7 || newCords[0]==0)) {
 			model.getCurP().setNameAndUpdateIcon("Queen");
@@ -322,7 +306,7 @@ public class Controller {
 			view.setPieceLocation(view.getPiece(newCords[0], 0), view.getPanelTile(newCords[0], 3));
 		}
 		}
-			
+		System.out.println(model.getBoard());	
 		endTurn();
 		model.setCurP(null);
 		endGame(model.getTurn());

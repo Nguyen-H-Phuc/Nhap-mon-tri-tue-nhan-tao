@@ -245,10 +245,10 @@ public class Model {
 	    }
 	    // kiem tra xem co bi chieu khong
 	    if(isCheck(white, black, board)) {
-	    	score -=50;
+	    	score -=1000;
 	    }
 	    if(isCheck(black, white, board)) {
-	    	score +=50;
+	    	score +=1000;
 	    }
 	    score+=castled(white, black, board);
 	    score-=castled(black, white, board);
@@ -287,13 +287,13 @@ public class Model {
 						Player max = new Player(white);
 						Player min = new Player(black);
 						Board newBoard = new Board(max, min);
-						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
+//						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
 						// Cap nhat trang thai board						
 						handleMove(newBoard, max.getPiece(i), move, max, min);
 						if(checkPromotion(newBoard)!=null) {
 							promote(newBoard,max, min,checkPromotion(newBoard), 1);
 						}
-						System.out.println(newBoard.toString()+"sau khi di chuyen");
+//						System.out.println(newBoard.toString()+"sau khi di chuyen");
 						
 						int[] result = minimax(!turnWhite, newBoard, depth - 1, max, min);
 						int currentValue = result[0];
@@ -319,13 +319,13 @@ public class Model {
 						Player min = new Player(black);
 						Board newBoard = new Board(min, max);
 
-						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
+//						System.out.println(newBoard.toString()+"Truoc khi di chuyen");
 						// Cap nhat trang thai board
 						handleMove(newBoard, min.getPiece(i), move, min, max);
 						if(checkPromotion(newBoard)!=null) {
 							promote(newBoard,max, min,checkPromotion(newBoard), 1);
 						}
-						System.out.println(newBoard.toString()+"sau khi di chuyen");
+//						System.out.println(newBoard.toString()+"sau khi di chuyen");
 						
 						int[] result = minimax(!turnWhite, newBoard, depth - 1, max, min);
 						
@@ -484,63 +484,5 @@ public class Model {
 	public Board getBoard() {
 		return board;
 	}
-	
-	public static void main(String[] args) {
-	    Model m = new Model();
-	    m.addPlayers();
-	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(3), new int[]{4, 3}, m.getPlayer1(), m.getPlayer2());
-	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(4), new int[]{3, 4}, m.getPlayer2(), m.getPlayer1());
-	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(3), new int[]{3, 4}, m.getPlayer1(), m.getPlayer2());
-	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(13), new int[]{4, 1}, m.getPlayer2(), m.getPlayer1());
-	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(2), new int[]{5, 2}, m.getPlayer1(), m.getPlayer2());
-	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(13), new int[]{5, 2}, m.getPlayer2(), m.getPlayer1());
-	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(1), new int[]{5, 2}, m.getPlayer1(), m.getPlayer2());
-	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(14), new int[]{2, 7}, m.getPlayer2(), m.getPlayer1());
-	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(11), new int[]{3, 3}, m.getPlayer1(), m.getPlayer2());
-	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(11), new int[]{4, 7}, m.getPlayer2(), m.getPlayer1());
-	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(3), new int[]{2, 4}, m.getPlayer1(), m.getPlayer2());
-	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(11), new int[]{6, 5}, m.getPlayer2(), m.getPlayer1());
-	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(12), new int[]{6, 5}, m.getPlayer1(), m.getPlayer2());
-	    m.handleMove(m.getBoard(), m.getPlayer2().getPiece(3), new int[]{2, 4}, m.getPlayer2(), m.getPlayer1());
-//	    System.out.println(m.getBoard());
-	    m.handleMove(m.getBoard(), m.getPlayer1().getPiece(11), new int[] {2, 4}, m.getPlayer1(), m.getPlayer2());
-	    m.minimax(false, m.getBoard(), 1, m.getPlayer1(), m.getPlayer2());
-	    System.out.println(m.getBoard());
-
-//	    for(int [] move : m.listMoveLegal(m.getPlayer2(), m.getPlayer1(), m.getPlayer2().getPiece(15), m.getBoard())) {
-//	    	System.out.println(move[0]);
-//	    	System.out.println(move[1]);
-//	    }
-//	    Runtime runtime = Runtime.getRuntime();
-//
-//	    // Gọi garbage collector để dọn dẹp trước khi đo
-//	    runtime.gc();
-//
-//	    // Bộ nhớ trước khi chạy minimax
-//	    long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
-//
-//	    // Bắt đầu đo thời gian
-//	    long startTime = System.nanoTime();
-//
-//	    // Chạy minimax
-//	    int[] bestMove = m.minimax(false, m.getBoard(), 4, m.getPlayer1(), m.getPlayer2());
-////	    int[] bestMove = m.alphabeta(false, 1, m.getBoard(), m.getPlayer1(), m.getPlayer2(), Integer.MIN_VALUE, Integer.MAX_VALUE);
-//	    // Kết thúc đo thời gian
-//	    long endTime = System.nanoTime();
-//
-//	    // Bộ nhớ sau khi chạy minimax
-//	    long memoryAfter = runtime.totalMemory() - runtime.freeMemory();
-//
-//	    // Tính thời gian thực thi
-//	    long duration = (endTime - startTime) / 1_000_000; // Đổi ra mili giây
-//	    System.out.println("Thời gian thực thi minimax: " + duration + " ms");
-//
-//	    // Tính bộ nhớ sử dụng
-//	    long memoryUsed = (memoryAfter - memoryBefore) / 1024; // Đổi ra KB
-//	    System.out.println("Bộ nhớ sử dụng minimax: " + memoryUsed + " KB");	    
-//	    for(int i: bestMove)
-//	    	System.out.println(i);
-	}
-
 }
 
